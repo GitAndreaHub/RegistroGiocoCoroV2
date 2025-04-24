@@ -3,47 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Prototype GiocoCoro UI</title>
+  <meta name="theme-color" content="#db2777">
+  <title>Registro GiocoCoro</title>
+  <!-- App Icon for Home Screen -->
+  <link rel="apple-touch-icon" href="icon.png">
   <!-- Tailwind CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
-    body { font-family: 'Poppins', sans-serif; background: #f9f9f9; margin: 0; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
     #root { max-width: 600px; margin: 0 auto; padding: 1rem; }
-    .header { background: linear-gradient(90deg, #ec4899, #db2777); color: #fff; padding: 1.5rem 1rem 1rem; border-radius: 0.5rem; }
-    .nav { display: flex; margin-top: 0.5rem; }
-    .nav-btn { flex: 1; text-align: center; padding: 0.75rem 0.5rem; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+    .header {
+      background: linear-gradient(90deg, #ec4899, #db2777);
+      color: #fff;
+      padding: 1.5rem 1rem 1rem;
+      border-radius: 0.5rem;
+    }
+    .nav {
+      display: flex;
+      margin-top: 0.5rem;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
     .nav-active { border-bottom: 3px solid #fff; }
-    .view-container { position: relative; margin-top: 1rem; }
+    .view-container { position: relative; margin-top: 1rem; min-height: 200px; }
     .view-panel { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
     .view-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
     .view-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
-    input { flex: 1 1 auto; min-width: 120px; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-    /* Updated add button color to match header gradient */
-    .btn-add { background: linear-gradient(90deg, #ec4899, #db2777); color: #fff; padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: 600; transition: transform 0.1s ease; }
+    input[type="date"], input[type="text"], input[type="month"] {
+      flex: 1 1 auto;
+      min-width: 120px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+    }
+    .btn-add {
+      background: linear-gradient(90deg, #ec4899, #db2777);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: transform 0.1s ease;
+    }
     .btn-add:active { transform: scale(0.98); }
-    .student-item { background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .status-btn { min-width: 6rem; padding: 0.5rem; border-radius: 9999px; font-weight: 600; transition: background-color 0.2s ease, transform 0.2s ease; }
+    .student-item {
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .status-btn {
+      min-width: 6rem;
+      padding: 0.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
     .status-btn.default { background: #e5e7eb; color: #374151; }
     .status-btn.present { background: #10b981; color: #fff; }
     .status-btn.absent { background: #ef4444; color: #fff; }
     .status-btn:hover { transform: scale(1.05); }
-    .delete-btn { background: none; border: none; color: #e11d48; font-size: 1.25rem; cursor: pointer; margin-left: 0.5rem; }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #e11d48;
+      font-size: 1.25rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
     .delete-btn:hover { background: #fee2e2; border-radius: 0.375rem; }
-    .stats-btn { width: 100%; background: #f59e0b; color: #fff; padding: 0.75rem; font-weight: 600; border-radius: 0.375rem; margin: 1rem 0 0.5rem; }
+    .stats-btn {
+      width: 100%;
+      background: #f59e0b;
+      color: #fff;
+      padding: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      margin: 1rem 0 0.5rem;
+    }
     .stats-container { overflow: hidden; transition: max-height 0.3s ease; }
     .stats-collapsed { max-height: 0; }
     .stats-expanded { max-height: 300px; }
-    /* Popup animations */
     @keyframes fadeInScale {
       0% { opacity: 0; transform: scale(0.8); }
       100% { opacity: 1; transform: scale(1); }
     }
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; }
-    .modal { background: #fff; border-radius: 0.5rem; padding: 1.5rem; width: 90%; max-width: 400px; border-top: 4px solid #ec4899; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: fadeInScale 0.2s ease-out; }
+    .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:50; }
+    .modal {
+      background: #fff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      width: 90%; max-width: 400px;
+      border-top: 4px solid #ec4899;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      animation: fadeInScale 0.2s ease-out;
+    }
     .modal p { margin-bottom: 1rem; }
     .modal button { margin: 0 0.5rem; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; }
     .btn-confirm { background: #ef4444; color: #fff; }
@@ -62,7 +135,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
   <script>
-    // Replace with your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyA4TzdjNP4roonlqd9Pz5Nebs7Q2xQjcOo",
       authDomain: "registro-giococoro-v2.firebaseapp.com",
@@ -88,79 +160,99 @@
         const [showStats, setShowStats] = useState(false);
         const [pendingDelete, setPendingDelete] = useState(null);
 
-        useEffect(() => db.collection('students').get().then(snap => setStudents(snap.docs.map(d => d.data().name))), []);
+        useEffect(() => {
+          db.collection('students').get().then(snap => setStudents(snap.docs.map(d => d.data().name)));
+        }, []);
+
         useEffect(() => {
           if (!students.length) return;
           db.collection('attendance').doc(date).get().then(doc => {
             if (doc.exists) setAttendance(prev => ({ ...prev, [date]: doc.data() }));
             else {
-              const init = {}; students.forEach(n=>init[n]=null);
+              const init = {};
+              students.forEach(n => init[n] = null);
               db.collection('attendance').doc(date).set(init);
-              setAttendance(prev=>({...prev,[date]:init}));
+              setAttendance(prev => ({ ...prev, [date]: init }));
             }
           });
         }, [date, students]);
 
         const toggleStatus = name => {
-          const dayRec = { ...(attendance[date]||{}) };
+          const dayRec = { ...(attendance[date] || {}) };
           const cur = dayRec[name];
-          dayRec[name] = cur===null?true:cur===true?false:null;
-          setAttendance(prev=>({...prev,[date]:dayRec}));
+          dayRec[name] = cur === null ? true : cur === true ? false : null;
+          setAttendance(prev => ({ ...prev, [date]: dayRec }));
           db.collection('attendance').doc(date).set(dayRec);
         };
 
         const addStudent = () => {
-          const n=newName.trim(); if(!n||students.includes(n))return;
-          db.collection('students').add({name:n}).then(()=>{
-            setStudents(prev=>[...prev,n]); setNewName('');
-            const dayRec={...(attendance[date]||{})}; dayRec[n]=null;
+          const n = newName.trim();
+          if (!n || students.includes(n)) return;
+          db.collection('students').add({ name: n }).then(() => {
+            setStudents(prev => [...prev, n]); setNewName('');
+            const dayRec = { ...(attendance[date] || {}) };
+            dayRec[n] = null;
             db.collection('attendance').doc(date).set(dayRec);
-            setAttendance(prev=>({...prev,[date]:dayRec}));
+            setAttendance(prev => ({ ...prev, [date]: dayRec }));
           });
         };
 
         const confirmDelete = () => {
-          const n=pendingDelete;
-          db.collection('students').where('name','==',n).get().then(snap=>{
-            snap.forEach(doc=>doc.ref.delete());
-            setStudents(prev=>prev.filter(x=>x!==n));
-            setAttendance(prev=>{
-              const upd={}; Object.entries(prev).forEach(([d,rec])=>{const c={...rec};delete c[n];upd[d]=c;}); return upd;
+          const n = pendingDelete;
+          db.collection('students').where('name','==',n).get().then(snap => {
+            snap.forEach(doc => doc.ref.delete());
+            setStudents(prev => prev.filter(x => x !== n));
+            setAttendance(prev => {
+              const upd = {};
+              Object.entries(prev).forEach(([d, rec]) => {
+                const c = { ...rec };
+                delete c[n];
+                upd[d] = c;
+              });
+              return upd;
             });
             setPendingDelete(null);
           });
         };
-        const cancelDelete = ()=>setPendingDelete(null);
 
-        const dayRec = attendance[date]||{};
-        const presentCount = Object.values(dayRec).filter(v=>v===true).length;
-        const absentCount = Object.values(dayRec).filter(v=>v===false).length;
-        const monthDates = Object.keys(attendance).filter(d=>d.startsWith(month));
-        const stats = students.map(n=>{let p=0,a=0;monthDates.forEach(d=>{const v=attendance[d]?.[n];if(v===true) p++;else if(v===false) a++;});return{ name:n,presenze:p,assenze:a};});
+        const cancelDelete = () => setPendingDelete(null);
 
-        return React.createElement(React.Fragment,null,
-          React.createElement('div',{className:'header'},
-            React.createElement('h1',{className:'text-2xl font-bold'},'GiocoCoro'),
-            React.createElement('div',{className:'nav'},
-              React.createElement('div',{className:`nav-btn ${view==='daily'?'nav-active':''}`,onClick:()=>setView('daily')},'Giornaliera'),
-              React.createElement('div',{className:`nav-btn ${view==='monthly'?'nav-active':''}`,onClick:()=>setView('monthly')},'Mensile')
+        const dayRec = attendance[date] || {};
+        const presentCount = Object.values(dayRec).filter(v => v === true).length;
+        const absentCount = Object.values(dayRec).filter(v => v === false).length;
+        const monthDates = Object.keys(attendance).filter(d => d.startsWith(month));
+        const stats = students.map(n => {
+          let pres = 0, abs = 0;
+          monthDates.forEach(d => {
+            const v = attendance[d]?.[n]; if (v === true) pres++; else if (v === false) abs++; 
+          });
+          return { name: n, presenze: pres, assenze: abs };
+        });
+
+        return React.createElement(
+          React.Fragment, null,
+          React.createElement('div', { className: 'header' },
+            React.createElement('h1', { className: 'text-2xl font-bold' }, 'Registro GiocoCoro'),
+            React.createElement('div', { className: 'nav' },
+              React.createElement('div', { className: `nav-btn ${view==='daily'?'nav-active':''}`, onClick:() => setView('daily') }, 'Giornaliera'),
+              React.createElement('div', { className: `nav-btn ${view==='monthly'?'nav-active':''}`, onClick:() => setView('monthly') }, 'Mensile')
             )
           ),
-          React.createElement('div',{className:'view-container'},
-            React.createElement('div',{className:`${view==='daily'?'view-visible':'view-hidden'} view-panel`},
-              React.createElement('div',{className:'input-group'},
-                React.createElement('input',{type:'date',value:date,onChange:e=>setDate(e.target.value)}),
-                React.createElement('input',{type:'text',placeholder:'Nuovo studente',value:newName,onChange:e=>setNewName(e.target.value)}),
-                React.createElement('button',{className:'btn-add',onClick:addStudent},'Aggiungi')
+          React.createElement('div', { className: 'view-container' },
+            React.createElement('div', { className: `${view==='daily'?'view-visible':'view-hidden'} view-panel` },
+              React.createElement('div', { className: 'input-group' },
+                React.createElement('input', { type:'date', value:date, onChange:e=>setDate(e.target.value) }),
+                React.createElement('input', { type:'text', placeholder:'Nuovo studente', value:newName, onChange:e=>setNewName(e.target.value) }),
+                React.createElement('button', { className:'btn-add', onClick:addStudent }, 'Aggiungi')
               ),
-              students.map(n=>React.createElement('div',{key:n,className:'student-item'},
+              students.map(n => React.createElement('div',{key:n,className:'student-item'},
                 React.createElement('span',null,n),
                 React.createElement('div',null,
-                  React.createElement('button',{className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`,onClick:()=>toggleStatus(n)},dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
+                  React.createElement('button',{className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`,onClick:()=>toggleStatus(n)}, dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
                   React.createElement('button',{className:'delete-btn',onClick:()=>setPendingDelete(n)},'×')
                 )
               )),
-              React.createElement('button',{className:'stats-btn',onClick:()=>setShowStats(s=>!s)},showStats?'Nascondi Statistiche':'Mostra Statistiche'),
+              React.createElement('button',{className:'stats-btn',onClick:()=>setShowStats(s=>!s)}, showStats?'Nascondi Statistiche':'Mostra Statistiche'),
               React.createElement('div',{className:`stats-container ${showStats?'stats-expanded':'stats-collapsed'}`},
                 React.createElement('div',{className:'bg-white p-4 rounded shadow'},
                   React.createElement('p',null,`Presenti: ${presentCount}`),
