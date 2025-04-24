@@ -1,209 +1,43 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype GiocoCoro UI</title>
-  <!-- Tailwind CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Poppins', sans-serif; background: #f9f9f9; margin: 0; }
-    #root { max-width: 600px; margin: 0 auto; padding-bottom: 4rem; position: relative; }
-    .status-btn { padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s ease, background-color 0.2s ease; }
-    .status-btn.default { background-color: #E5E7EB; color: #374151; }
-    .status-btn.present { background-color: #10B981; color: white; }
-    .status-btn.absent { background-color: #EF4444; color: white; }
-    .status-btn:hover { transform: scale(1.05); }
-    .delete-btn { color: #e11d48; padding: 0.25rem; background: none; border: none; cursor: pointer; display: flex; align-items: center; }
-    .delete-btn:hover { background-color: #fee2e2; border-radius: 0.375rem; }
-    .view-container { position: relative; min-height: 200px; }
-    .view-panel { position: absolute; top: 0; left: 0; width: 100%; transition: opacity 0.4s ease; }
-    .view-hidden { opacity: 0; pointer-events: none; }
-    .view-visible { opacity: 1; }
-    .stats-container { overflow: hidden; transition: max-height 0.4s ease; }
-    .stats-collapsed { max-height: 0; }
-    .stats-expanded { max-height: 300px; }
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease forwards; }
-    .modal { background: white; border-radius: 0.5rem; padding: 1.5rem; max-width: 80%; border-top: 4px solid #ec4899; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: scaleIn 0.2s ease forwards; }
-    .modal button { margin: 0 0.5rem; padding: 0.5rem 1rem; border-radius: 0.375rem; }
-    .btn-confirm { background-color: #EF4444; color: white; }
-    .btn-cancel { background-color: #9CA3AF; color: white; }
-    @keyframes slideDownFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    .student-item { animation: slideDownFade 0.3s ease both; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-  <!-- React & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-  <script>
-    // Firebase (compat) configuration per GiocoCoro V2
-    const firebaseConfig = {
-      apiKey: "AIzaSyA4TzdjNP4roonlqd9Pz5Nebs7Q2xQjcOo",
-      authDomain: "registro-giococoro-v2.firebaseapp.com",
-      projectId: "registro-giococoro-v2",
-      storageBucket: "registro-giococoro-v2.firebasestorage.app",
-      messagingSenderId: "241025435819",
-      appId: "1:241025435819:web:081adbe21b592a0eda8fee"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-  <!-- App Script -->
-  <script>
-    (function() {
-      const { useState, useEffect } = React;
-      function Prototype() {
-        const today = new Date().toISOString().split('T')[0];
-        const month = today.slice(0, 7);
-        const [view, setView] = useState('daily');
-        const [selectedDate, setSelectedDate] = useState(today);
-        const [selectedMonth, setSelectedMonth] = useState(month);
-        const [students, setStudents] = useState([]);
-        const [attendance, setAttendance] = useState({});
-        const [newName, setNewName] = useState('');
-        const [showStats, setShowStats] = useState(false);
-        const [pendingDelete, setPendingDelete] = useState(null);
+// Service Worker for GiocoCoro V2
+// Version v2: cache-first con invalidazione delle cache precedenti
 
-        // Fetch iniziale dalla Firestore
-        useEffect(() => {
-          db.collection('students').get().then(snapshot => {
-            const list = snapshot.docs.map(doc => doc.data().name);
-            setStudents(list);
-          });
-        }, []);
+const CACHE_NAME = 'giococoro-v2';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/icon.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css',
+  'https://unpkg.com/react@18/umd/react.development.js',
+  'https://unpkg.com/react-dom@18/umd/react-dom.development.js'
+];
 
-        // Inizializza giorno
-        useEffect(() => {
-          if (!attendance[selectedDate]) {
-            const init = {};
-            students.forEach(n => init[n] = null);
-            setAttendance(prev => ({ ...prev, [selectedDate]: init }));
+// Install: apri la cache e aggiungi tutte le risorse
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
+  );
+});
+
+// Activate: elimina eventuali cache precedenti a questa versione
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => 
+      Promise.all(
+        cacheNames.map(name => {
+          if (name !== CACHE_NAME) {
+            return caches.delete(name);
           }
-        }, [selectedDate, students]);
+        })
+      )
+    )
+  );
+});
 
-        const toggleStatus = name => {
-          setAttendance(prev => {
-            const day = { ...prev[selectedDate] };
-            const cur = day[name];
-            const newStatus = cur === null ? true : (cur === true ? false : null);
-            day[name] = newStatus;
-            // Aggiorna Firestore
-            db.collection('attendance').doc(selectedDate).set({ students: Object.entries(day).map(([n,p]) => ({ name: n, present: p })) });
-            return { ...prev, [selectedDate]: day };
-          });
-        };
-
-        const addStudent = () => {
-          const name = newName.trim(); if (!name || students.includes(name)) return;
-          db.collection('students').add({ name }).then(() => {
-            setStudents(prev => [...prev, name]);
-            setNewName('');
-          });
-        };
-
-        const confirmDelete = () => {
-          setPendingDelete(null);
-          db.collection('students').where('name','==',pendingDelete).get().then(snapshot => {
-            snapshot.forEach(doc => doc.ref.delete());
-            setStudents(prev => prev.filter(n => n !== pendingDelete));
-          });
-        };
-        const cancelDelete = () => setPendingDelete(null);
-
-        const dayRec = attendance[selectedDate] || {};
-        const presentCount = Object.values(dayRec).filter(v => v === true).length;
-        const absentCount = Object.values(dayRec).filter(v => v === false).length;
-
-        const monthlyDates = Object.keys(attendance).filter(d => d.startsWith(selectedMonth));
-        const stats = students.map(n => {
-          let pres = 0, abs = 0;
-          monthlyDates.forEach(d => { const v = attendance[d]?.[n]; if (v === true) pres++; else if (v === false) abs++; });
-          return { name: n, presenze: pres, assenze: abs };
-        });
-
-        const CrossIcon = () => React.createElement(
-          'svg',{ xmlns:'http://www.w3.org/2000/svg', className:'w-5 h-5', viewBox:'0 0 24 24', fill:'none', stroke:'currentColor', strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round' },
-            React.createElement('line',{ x1:'18', y1:'6', x2:'6', y2:'18'}),
-            React.createElement('line',{ x1:'6', y1:'6', x2:'18', y2:'18'})
-        );
-
-        return React.createElement(React.Fragment,null,
-          React.createElement('header',{ className:'sticky top-0 bg-gradient-to-r from-pink-400 to-pink-600 text-white p-4 shadow-md z-20'},
-            React.createElement('h1',{ className:'text-2xl font-bold text-center mb-2'},'GiocoCoro'),
-            React.createElement('div',{ className:'flex'},
-              React.createElement('button',{ type:'button', onClick:()=>setView('daily'), className:`flex-1 py-2 ${view==='daily'?'border-b-2 border-white':''}`},'Giornaliera'),
-              React.createElement('button',{ type:'button', onClick:()=>setView('monthly'), className:`flex-1 py-2 ${view==='monthly'?'border-b-2 border-white':''}`},'Mensile')
-            )
-          ),
-          React.createElement('main',{ className:'p-4 pt-6'},
-            React.createElement('div',{ className:'view-container'},
-              React.createElement('div',{ className:`view-panel ${view==='daily'?'view-visible':'view-hidden'}`},
-                React.createElement('div',{ className:'flex items-center justify-between mb-4'},
-                  React.createElement('input',{ type:'date', value:selectedDate, onChange:e=>setSelectedDate(e.target.value), className:'p-2 border rounded'}),
-                  React.createElement('div',null,
-                    React.createElement('input',{ type:'text', placeholder:'Nuovo studente', value:newName, onChange:e=>setNewName(e.target.value), className:'p-2 border rounded mr-2'}),
-                    React.createElement('button',{ type:'button', onClick:addStudent, className:'px-4 py-2 bg-pink-600 text-white rounded'},'Aggiungi')
-                  )
-                ),
-                students.map(n=>React.createElement('div',{ key:n,className:'student-item bg-white p-4 rounded shadow flex justify-between items-center mb-3'},
-                  React.createElement('span',null,n),
-                  React.createElement('div',{ className:'flex items-center gap-2'},
-                    React.createElement('button',{ type:'button', onClick:()=>toggleStatus(n), className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`},dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
-                    React.createElement('button',{ type:'button', onClick:()=>setPendingDelete(n), className:'delete-btn'},React.createElement(CrossIcon))
-                  )
-                )),
-                React.createElement('button',{ type:'button', onClick:()=>setShowStats(s=>!s), className:'w-full py-2 bg-yellow-500 text-white rounded'},showStats?'Nascondi Statistiche':'Mostra Statistiche'),
-                React.createElement('div',{ className:`stats-container ${showStats?'stats-expanded':'stats-collapsed'}`},
-                  React.createElement('div',{ className:'bg-white p-4 rounded shadow'},
-                    React.createElement('p',null,`Presenti: ${presentCount}`),
-                    React.createElement('p',null,`Assenti: ${absentCount}`),
-                    React.createElement('p',null,`Iscritti: ${students.length}`)
-                  )
-                )
-              ),
-              React.createElement('div',{ className:`view-panel ${view==='monthly'?'view-visible':'view-hidden'}`},
-                React.createElement('input',{ type:'month', value:selectedMonth, onChange:e=>setSelectedMonth(e.target.value), className:'p-2 border rounded mb-4'}),
-                React.createElement('table',{ className:'w-full bg-white rounded shadow divide-y divide-gray-200'},
-                  React.createElement('thead',{ className:'bg-pink-50'},
-                    React.createElement('tr',null,
-                      React.createElement('th',{ className:'p-2 text-left'},'Nome'),
-                      React.createElement('th',{ className:'p-2 text-center'},'Presenze'),
-                      React.createElement('th',{ className:'p-2 text-center'},'Assenze'})
-                    ),
-                  React.createElement('tbody',null,
-                    stats.map(r=>React.createElement('tr',{ key:r.name,className:'hover:bg-pink-50'},
-                      React.createElement('td',{ className:'p-2'},r.name),
-                      React.createElement('td',{ className:'p-2 text-center'},r.presenze),
-                      React.createElement('td',{ className:'p-2 text-center'},r.assenze})
-                    ))
-                  )
-                )
-              )
-            ),
-            pendingDelete&&React.createElement('div',{ className:'modal-backdrop'},
-              React.createElement('div',{ className:'modal'},
-                React.createElement('p',{ className:'mb-4'},`Sei sicuro di voler eliminare ${pendingDelete}?`),
-                React.createElement('div',{ className:'flex justify-end'},
-                  React.createElement('button',{ type:'button', onClick:confirmDelete,className:'btn-confirm px-4 py-2 mr-2'},'Sì'),
-                  React.createElement('button',{ type:'button', onClick:cancelDelete,className:'btn-cancel px-4 py-2'},'No')
-                )
-              )
-            )
-          )
-        );
-      }
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(Prototype));
-    })();
-  </script>
-</body>
-</html>
+// Fetch: rispondi con la cache se disponibile, altrimenti vai in rete
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(cached => cached || fetch(event.request))
+  );
+});
