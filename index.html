@@ -9,115 +9,37 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --safe-top: env(safe-area-inset-top);
-      --safe-bottom: env(safe-area-inset-bottom);
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding-top: var(--safe-top);
-      padding-bottom: var(--safe-bottom);
-    }
+    :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
+    body { font-family: 'Poppins', sans-serif; background: #f9f9f9; margin: 0; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
     #root { max-width: 600px; margin: 0 auto; padding: 1rem; }
-    .header {
-      background: linear-gradient(90deg, #ec4899, #db2777);
-      color: #fff;
-      padding: 1.5rem 1rem 1rem;
-      border-radius: 0.5rem;
-    }
+    .header { background: linear-gradient(90deg, #ec4899, #db2777); color: #fff; padding: 1.5rem 1rem 1rem; border-radius: 0.5rem; }
     .nav { display: flex; margin-top: 0.5rem; }
-    .nav-btn {
-      flex: 1;
-      text-align: center;
-      padding: 0.75rem 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .nav-active {
-      border-bottom: 3px solid #fff;
-    }
+    .nav-btn { flex: 1; text-align: center; padding: 0.75rem 0.5rem; font-weight: 600; cursor: pointer; }
+    .nav-active { border-bottom: 3px solid #fff; }
     .view-container { position: relative; margin-top: 1rem; }
-    .view-panel {
-      position: absolute;
-      inset: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
+    .view-panel { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
     .view-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
     .view-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .input-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 1.5rem 0;
-    }
-    input[type="date"], input[type="text"], input[type="month"] {
-      flex: 1 1 auto;
-      min-width: 120px;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-    }
-    .btn-add {
-      background: #d946ef;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      border-radius: 0.375rem;
-      font-weight: 600;
-    }
+    .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
+    input { flex: 1 1 auto; min-width: 120px; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
+    .btn-add { background: #d946ef; color: #fff; padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: 600; }
     .btn-add:active { transform: scale(0.98); }
-    .student-item {
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      animation: slideDown 0.3s ease;
-    }
-    .status-btn {
-      min-width: 6rem;
-      padding: 0.5rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
+    .student-item { background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .status-btn { min-width: 6rem; padding: 0.5rem; border-radius: 9999px; font-weight: 600; transition: background-color 0.2s ease, transform 0.2s ease; }
     .status-btn.default { background: #e5e7eb; color: #374151; }
     .status-btn.present { background: #10b981; color: #fff; }
     .status-btn.absent { background: #ef4444; color: #fff; }
     .status-btn:hover { transform: scale(1.05); }
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #e11d48;
-      font-size: 1.25rem;
-      cursor: pointer;
-      margin-left: 0.5rem;
-    }
+    .delete-btn { background: none; border: none; color: #e11d48; font-size: 1.25rem; cursor: pointer; margin-left: 0.5rem; }
     .delete-btn:hover { background: #fee2e2; border-radius: 0.375rem; }
-    .stats-btn {
-      width: 100%;
-      background: #f59e0b;
-      color: #fff;
-      padding: 0.75rem;
-      font-weight: 600;
-      border-radius: 0.375rem;
-      margin: 1rem 0 0.5rem;
-      transition: background-color 0.2s ease;
-    }
-    .stats-btn:hover { background: #d97706; }
+    .stats-btn { width: 100%; background: #f59e0b; color: #fff; padding: 0.75rem; font-weight: 600; border-radius: 0.375rem; margin: 1rem 0 0.5rem; }
     .stats-container { overflow: hidden; transition: max-height 0.3s ease; }
     .stats-collapsed { max-height: 0; }
     .stats-expanded { max-height: 300px; }
     table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
     th, td { padding: 0.5rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
     th { background: #fce7f3; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 480px) {
-      .header { padding: 1rem 0.75rem; }
       .nav-btn { padding: 0.5rem 0.25rem; font-size: 0.9rem; }
       .input-group { flex-direction: column; }
       input, .btn-add { width: 100%; }
@@ -148,84 +70,109 @@
       const { useState, useEffect } = React;
       function App() {
         const today = new Date().toISOString().split('T')[0];
-        const [view, setView] = useState('daily');
-        const [date, setDate] = useState(today);
-        const [month, setMonth] = useState(today.slice(0,7));
-        const [students, setStudents] = useState([]);
-        const [attendance, setAttendance] = useState({});
-        const [newName, setNewName] = useState('');
-        const [showStats, setShowStats] = useState(false);
+        const [view,setView] = useState('daily');
+        const [date,setDate] = useState(today);
+        const [month,setMonth] = useState(today.slice(0,7));
+        const [students,setStudents] = useState([]);
+        const [attendance,setAttendance] = useState({});
+        const [newName,setNewName] = useState('');
+        const [showStats,setShowStats] = useState(false);
 
-        useEffect(() => {
-          db.collection('students').get().then(snap => setStudents(snap.docs.map(d => d.data().name)));
-        }, []);
+        // load students
+        useEffect(()=>{
+          db.collection('students').get().then(snap=>{
+            setStudents(snap.docs.map(d=>d.data().name));
+          });
+        },[]);
 
-        useEffect(() => {
-          if (!attendance[date]) {
-            const init = {};
-            students.forEach(n => init[n] = null);
-            setAttendance(prev => ({ ...prev, [date]: init }));
-          }
-        }, [date, students]);
+        // load attendance for selected date
+        useEffect(()=>{
+          if(!students.length) return;
+          db.collection('attendance').doc(date).get().then(doc=>{
+            if(doc.exists){
+              setAttendance(prev=>({ ...prev, [date]: doc.data() }));
+            } else {
+              const init = {};
+              students.forEach(n=> init[n]=null);
+              db.collection('attendance').doc(date).set(init);
+              setAttendance(prev=>({ ...prev, [date]: init }));
+            }
+          });
+        },[date,students]);
 
         const toggleStatus = name => {
-          setAttendance(prev => {
-            const day = { ...prev[date] };
-            const cur = day[name];
-            day[name] = cur === null ? true : cur === true ? false : null;
-            return { ...prev, [date]: day };
-          });
+          const dayRec = {...(attendance[date]||{})};
+          const cur = dayRec[name];
+          dayRec[name] = cur===null? true : cur===true? false : null;
+          // update local
+          setAttendance(prev=>({ ...prev, [date]: dayRec }));
+          // persist
+          db.collection('attendance').doc(date).set(dayRec);
         };
 
         const addStudent = () => {
-          const n = newName.trim(); if (!n) return;
-          db.collection('students').add({ name: n }).then(() => {
-            setStudents(prev => [...prev, n]);
-            setNewName('');
+          const n = newName.trim(); if(!n||students.includes(n)) return;
+          db.collection('students').add({ name:n }).then(()=>{
+            setStudents(prev=>[...prev,n]); setNewName('');
+            // also update today's attendance
+            setAttendance(prev=>{
+              const dayRec = prev[date]||{};
+              dayRec[n]=null;
+              db.collection('attendance').doc(date).set(dayRec);
+              return { ...prev, [date]: dayRec };
+            });
           });
         };
 
-        const deleteStudent = n => {
-          db.collection('students').where('name','==',n).get().then(snap => {
-            snap.forEach(doc => doc.ref.delete());
-            setStudents(prev => prev.filter(x => x !== n));
+        const deleteStudent = n=>{
+          db.collection('students').where('name','==',n).get().then(snap=>{
+            snap.forEach(doc=>doc.ref.delete());
+            setStudents(prev=>prev.filter(x=>x!==n));
+            // remove from attendance
+            setAttendance(prev=>{
+              const updated = {...prev};
+              Object.keys(updated).forEach(d=> delete updated[d][n]);
+              return updated;
+            });
+            db.collection('attendance').doc(date).set(attendance[date]);
           });
         };
 
-        const dayRec = attendance[date] || {};
-        const presentCount = Object.values(dayRec).filter(v => v === true).length;
-        const absentCount = Object.values(dayRec).filter(v => v === false).length;
-        const monthDates = Object.keys(attendance).filter(d => d.startsWith(month));
-        const stats = students.map(n => {
-          let pres = 0, abs = 0;
-          monthDates.forEach(d => { const v = attendance[d]?.[n]; if (v === true) pres++; else if (v === false) abs++; });
-          return { name: n, presenze: pres, assenze: abs };
+        const dayRec = attendance[date]||{};
+        const presentCount = Object.values(dayRec).filter(v=>v===true).length;
+        const absentCount = Object.values(dayRec).filter(v=>v===false).length;
+        const monthDates = Object.keys(attendance).filter(d=>d.startsWith(month));
+        const stats = students.map(n=>{
+          let pres=0,abs=0;
+          monthDates.forEach(d=>{
+            const v = attendance[d]?.[n]; if(v===true) pres++; else if(v===false) abs++;
+          });
+          return { name:n,presenze:pres,assenze:abs };
         });
 
-        return React.createElement('div', {},
+        return React.createElement('div',{},
           React.createElement('div',{className:'header'},
             React.createElement('h1',{style:{margin:0,fontSize:'1.5rem'}},'GiocoCoro'),
             React.createElement('div',{className:'nav'},
-              React.createElement('button',{className:`nav-btn ${view==='daily'?'nav-active':''}`,onClick:() => setView('daily')},'Giornaliera'),
-              React.createElement('button',{className:`nav-btn ${view==='monthly'?'nav-active':''}`,onClick:() => setView('monthly')},'Mensile')
+              React.createElement('button',{className:`nav-btn ${view==='daily'?'nav-active':''}`,onClick:()=>setView('daily')},'Giornaliera'),
+              React.createElement('button',{className:`nav-btn ${view==='monthly'?'nav-active':''}`,onClick:()=>setView('monthly')},'Mensile')
             )
           ),
-
           React.createElement('div',{className:'view-container',style:{minHeight:'200px'}},
             React.createElement('div',{className:`view-panel ${view==='daily'?'view-visible':'view-hidden'}`},
               React.createElement('div',{className:'input-group'},
-                React.createElement('input',{type:'date',value:date,onChange:e => setDate(e.target.value)}),
-                React.createElement('input',{type:'text',value:newName,placeholder:'Nuovo studente',onChange:e => setNewName(e.target.value)}),
+                React.createElement('input',{type:'date',value:date,onChange:e=>setDate(e.target.value)}),
+                React.createElement('input',{type:'text',value:newName,placeholder:'Nuovo studente',onChange:e=>setNewName(e.target.value)}),
                 React.createElement('button',{className:'btn-add',onClick:addStudent},'Aggiungi')
               ),
-              students.map(n => React.createElement('div',{key:n,className:'student-item'},
+              students.map(n=>React.createElement('div',{key:n,className:'student-item'},
                 React.createElement('span',null,n),
                 React.createElement('div',{},
-                  React.createElement('button',{className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`,onClick:() => toggleStatus(n)}, dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
-                  React.createElement('button',{className:'delete-btn',onClick:() => deleteStudent(n)},'×')
+                  React.createElement('button',{className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`,onClick:()=>toggleStatus(n)},dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
+                  React.createElement('button',{className:'delete-btn',onClick:()=>deleteStudent(n)},'×')
                 )
               )),
-              React.createElement('button',{className:'stats-btn',onClick:() => setShowStats(s => !s)}, showStats ? 'Nascondi Statistiche' : 'Mostra Statistiche'),
+              React.createElement('button',{className:'stats-btn',onClick:()=>setShowStats(s=>!s)},showStats?'Nascondi Statistiche':'Mostra Statistiche'),
               React.createElement('div',{className:`stats-container ${showStats?'stats-expanded':'stats-collapsed'}`},
                 React.createElement('p',null,`Presenti: ${presentCount}`),
                 React.createElement('p',null,`Assenti: ${absentCount}`),
@@ -234,7 +181,7 @@
             ),
             React.createElement('div',{className:`view-panel ${view==='monthly'?'view-visible':'view-hidden'}`},
               React.createElement('div',{className:'input-group'},
-                React.createElement('input',{type:'month',value:month,onChange:e => setMonth(e.target.value)})
+                React.createElement('input',{type:'month',value:month,onChange:e=>setMonth(e.target.value)})
               ),
               React.createElement('table',null,
                 React.createElement('thead',null,
@@ -245,7 +192,7 @@
                   )
                 ),
                 React.createElement('tbody',null,
-                  stats.map(r => React.createElement('tr',{key:r.name},
+                  stats.map(r=>React.createElement('tr',{key:r.name},
                     React.createElement('td',null,r.name),
                     React.createElement('td',null,r.presenze),
                     React.createElement('td',null,r.assenze)
@@ -260,9 +207,7 @@
       root.render(React.createElement(App));
     })();
   </script>
-  <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-  </script>
+  <script> if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
 </body>
 </html>
 
