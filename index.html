@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#db2777">
-  <title>Registro GiocoCoro</title>
-  <!-- App Icon for Home Screen -->
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Tailwind CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
-    body {
+
       font-family: 'Poppins', sans-serif;
       background: #f9f9f9;
       margin: 0;
@@ -219,8 +204,8 @@
         const cancelDelete = () => setPendingDelete(null);
 
         const dayRec = attendance[date] || {};
-        const presentCount = Object.values(dayRec).filter(v => v === true).length;
-        const absentCount = Object.values(dayRec).filter(v => v === false).length;
+        const presentCount = students.filter(n => dayRec[n] === true).length;
+        const absentCount = students.filter(n => dayRec[n] === false).length;
         const monthDates = Object.keys(attendance).filter(d => d.startsWith(month));
         const stats = students.map(n => {
           let pres = 0, abs = 0;
