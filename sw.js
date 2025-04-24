@@ -1,7 +1,6 @@
-// Service Worker for GiocoCoro V2
-// Version v2: cache-first con invalidazione delle cache precedenti
+// Service Worker for GiocoCoro V3 con supporto caching dinamico e aggiornamenti
 
-const CACHE_NAME = 'giococoro-v2';
+const CACHE_NAME = 'giococoro-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,20 +10,19 @@ const urlsToCache = [
   'https://unpkg.com/react-dom@18/umd/react-dom.development.js'
 ];
 
-// Install: apri la cache e aggiungi tutte le risorse
+// Install: cache risorse base
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Activate: elimina eventuali cache precedenti a questa versione
+// Activate: elimina vecchie cache
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => 
+    caches.keys().then(names => 
       Promise.all(
-        cacheNames.map(name => {
+        names.map(name => {
           if (name !== CACHE_NAME) {
             return caches.delete(name);
           }
@@ -34,10 +32,13 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: rispondi con la cache se disponibile, altrimenti vai in rete
+// Fetch: forza rete per navigazione (index.html), altrimenti cache-first
 self.addEventListener('fetch', event => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request).catch(() => caches.match('/index.html')));
+    return;
+  }
   event.respondWith(
-    caches.match(event.request)
-      .then(cached => cached || fetch(event.request))
+    caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
