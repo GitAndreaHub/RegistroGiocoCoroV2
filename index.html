@@ -56,7 +56,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
   <script>
-    // Firebase init
+    // Replace with your actual Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA4TzdjNP4roonlqd9Pz5Nebs7Q2xQjcOo",
       authDomain: "registro-giococoro-v2.firebaseapp.com",
@@ -73,91 +73,157 @@
       const { useState, useEffect } = React;
       function App() {
         const today = new Date().toISOString().split('T')[0];
-        const [view,setView] = useState('daily');
-        const [date,setDate] = useState(today);
-        const [month,setMonth] = useState(today.slice(0,7));
-        const [students,setStudents] = useState([]);
-        const [attendance,setAttendance] = useState({});
-        const [newName,setNewName] = useState('');
-        const [showStats,setShowStats] = useState(false);
-        const [pendingDelete,setPendingDelete] = useState(null);
+        const [view, setView] = useState('daily');
+        const [date, setDate] = useState(today);
+        const [month, setMonth] = useState(today.slice(0,7));
+        const [students, setStudents] = useState([]);
+        const [attendance, setAttendance] = useState({});
+        const [newName, setNewName] = useState('');
+        const [showStats, setShowStats] = useState(false);
+        const [pendingDelete, setPendingDelete] = useState(null);
 
-        // load students
-        useEffect(()=>{
-          db.collection('students').get().then(snap=>{
-            setStudents(snap.docs.map(d=>d.data().name));
+        // Load students
+        useEffect(() => {
+          db.collection('students').get().then(snap => {
+            setStudents(snap.docs.map(d => d.data().name));
           });
-        },[]);
+        }, []);
 
-        // load attendance for selected date
-        useEffect(()=>{
-          if(!students.length) return;
-          db.collection('attendance').doc(date).get().then(doc=>{
-            if(doc.exists){
-              setAttendance(prev=>({ ...prev, [date]: doc.data() }));
+        // Load or initialize attendance for current date
+        useEffect(() => {
+          if (!students.length) return;
+          db.collection('attendance').doc(date).get().then(doc => {
+            if (doc.exists) {
+              setAttendance(prev => ({ ...prev, [date]: doc.data() }));
             } else {
               const init = {};
-              students.forEach(n=> init[n]=null);
+              students.forEach(n => init[n] = null);
               db.collection('attendance').doc(date).set(init);
-              setAttendance(prev=>({ ...prev, [date]: init }));
+              setAttendance(prev => ({ ...prev, [date]: init }));
             }
           });
-        },[date,students]);
+        }, [date, students]);
 
         const toggleStatus = name => {
-          const dayRec = {...(attendance[date]||{})};
+          const dayRec = { ...(attendance[date] || {}) };
           const cur = dayRec[name];
-          dayRec[name] = cur===null? true : cur===true? false : null;
-          setAttendance(prev=>({ ...prev, [date]: dayRec }));
+          dayRec[name] = cur === null ? true : cur === true ? false : null;
+          setAttendance(prev => ({ ...prev, [date]: dayRec }));
           db.collection('attendance').doc(date).set(dayRec);
         };
 
         const addStudent = () => {
-          const n = newName.trim(); if(!n||students.includes(n)) return;
-          db.collection('students').add({ name:n }).then(()=>{
-            setStudents(prev=>[...prev,n]); setNewName('');
-            const dayRec = attendance[date]||{};
-            dayRec[n]=null;
+          const n = newName.trim(); if (!n || students.includes(n)) return;
+          db.collection('students').add({ name: n }).then(() => {
+            setStudents(prev => [...prev, n]);
+            setNewName('');
+            const dayRec = attendance[date] || {};
+            dayRec[n] = null;
             db.collection('attendance').doc(date).set(dayRec);
-            setAttendance(prev=>({ ...prev, [date]: dayRec }));
+            setAttendance(prev => ({ ...prev, [date]: dayRec }));
           });
         };
 
         const confirmDelete = () => {
           const n = pendingDelete;
-          db.collection('students').where('name','==',n).get().then(snap=>{
-            snap.forEach(doc=>doc.ref.delete());
-            setStudents(prev=>prev.filter(x=>x!==n));
-            setAttendance(prev=>{
+          db.collection('students').where('name','==',n).get().then(snap => {
+            snap.forEach(doc => doc.ref.delete());
+            setStudents(prev => prev.filter(x => x !== n));
+            setAttendance(prev => {
               const updated = {};
-              Object.entries(prev).forEach(([d,rec])=>{
+              Object.entries(prev).forEach(([d,rec]) => {
                 const copy = { ...rec };
                 delete copy[n];
                 updated[d] = copy;
               });
               return updated;
             });
-            db.collection('attendance').doc(date).set(attendance[date]);
             setPendingDelete(null);
           });
         };
-
         const cancelDelete = () => setPendingDelete(null);
 
-        const dayRec = attendance[date]||{};
-        const presentCount = Object.values(dayRec).filter(v=>v===true).length;
-        const absentCount = Object.values(dayRec).filter(v=>v===false).length;
-        const monthDates = Object.keys(attendance).filter(d=>d.startsWith(month));
-        const stats = students.map(n=>{
-          let pres=0,abs=0;
-          monthDates.forEach(d=>{
-            const v = attendance[d]?.[n]; if(v===true) pres++; else if(v===false) abs++;
+        const dayRec = attendance[date] || {};
+        const presentCount = Object.values(dayRec).filter(v => v === true).length;
+        const absentCount = Object.values(dayRec).filter(v => v === false).length;
+        const monthDates = Object.keys(attendance).filter(d => d.startsWith(month));
+        const stats = students.map(n => {
+          let pres=0, abs=0;
+          monthDates.forEach(d => {
+            const v = attendance[d]?.[n]; if (v===true) pres++; else if (v===false) abs++;
           });
-          return { name:n,presenze:pres,assenze:abs };
+          return { name:n, presenze:pres, assenze:abs };
         });
 
-        return React.createElement('>",null);
+        return React.createElement(
+          React.Fragment, null,
+          React.createElement('div', { className: 'header' },
+            React.createElement('h1', { className: 'text-2xl font-bold' }, 'GiocoCoro'),
+            React.createElement('div', { className: 'nav' },
+              React.createElement('div', { className: `nav-btn ${view==='daily'?'nav-active':''}`, onClick:() => setView('daily') }, 'Giornaliera'),
+              React.createElement('div', { className: `nav-btn ${view==='monthly'?'nav-active':''}`, onClick:() => setView('monthly') }, 'Mensile')
+            )
+          ),
+          React.createElement('div', { className: 'view-container' },
+            React.createElement('div', { className: `${view==='daily'?'view-visible':'view-hidden'} view-panel` },
+              React.createElement('div', { className: 'input-group' },
+                React.createElement('input', { type:'date', value:date, onChange:e=>setDate(e.target.value) }),
+                React.createElement('input', { type:'text', placeholder:'Nuovo studente', value:newName, onChange:e=>setNewName(e.target.value) }),
+                React.createElement('button', { className:'btn-add', onClick:addStudent }, 'Aggiungi')
+              ),
+              students.map(n =>
+                React.createElement('div', { key:n, className:'student-item' },
+                  React.createElement('span', null, n),
+                  React.createElement('div', null,
+                    React.createElement('button', { className:`status-btn ${dayRec[n]===true?'present':dayRec[n]===false?'absent':'default'}`, onClick:()=>toggleStatus(n) }, dayRec[n]===true?'Presente':dayRec[n]===false?'Assente':'Non definito'),
+                    React.createElement('button', { className:'delete-btn', onClick:()=>setPendingDelete(n) }, '×')
+                  )
+                )
+              ),
+              React.createElement('button', { className:'stats-btn', onClick:()=>setShowStats(s=>!s) }, showStats?'Nascondi Statistiche':'Mostra Statistiche'),
+              React.createElement('div', { className:`stats-container ${showStats?'stats-expanded':'stats-collapsed'}` },
+                React.createElement('div', { className:'bg-white p-4 rounded shadow' },
+                  React.createElement('p', null, `Presenti: ${presentCount}`),
+                  React.createElement('p', null, `Assenti: ${absentCount}`),
+                  React.createElement('p', null, `Iscritti: ${students.length}`)
+                )
+              )
+            ),
+            React.createElement('div', { className: `${view==='monthly'?'view-visible':'view-hidden'} view-panel` },
+              React.createElement('input', { type:'month', value:month, onChange:e=>setMonth(e.target.value), className:'mb-4'}),
+              React.createElement('table', { className:'w-full bg-white rounded shadow divide-y divide-gray-200' },
+                React.createElement('thead', { className:'bg-pink-50' },
+                  React.createElement('tr', null,
+                    React.createElement('th', { className:'p-2 text-left' }, 'Nome'),
+                    React.createElement('th', { className:'p-2 text-center' }, 'Presenze'),
+                    React.createElement('th', { className:'p-2 text-center' }, 'Assenze')
+                  )
+                ),
+                React.createElement('tbody', null,
+                  stats.map(r =>
+                    React.createElement('tr', { key:r.name, className:'hover:bg-pink-50' },
+                      React.createElement('td', { className:'p-2' }, r.name),
+                      React.createElement('td', { className:'p-2 text-center' }, r.presenze),
+                      React.createElement('td', { className:'p-2 text-center' }, r.assenze)
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          pendingDelete && React.createElement('div', { className:'modal-backdrop' },
+            React.createElement('div', { className:'modal' },
+              React.createElement('p', null, `Sei sicuro di voler eliminare ${pendingDelete}?`),
+              React.createElement('div', { className:'flex justify-end' },
+                React.createElement('button', { className:'btn-confirm', onClick:confirmDelete }, 'Sì'),
+                React.createElement('button', { className:'btn-cancel', onClick:cancelDelete }, 'No')
+              )
+            )
+          )
+        );
       }
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(App));
     })();
   </script>
 </body>
