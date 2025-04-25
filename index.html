@@ -143,7 +143,7 @@
         // Confirm delete
         const confirmDelete = () => {
           const n = pendingDelete;
-          db.collection('students').where('name', '=='', pendingDelete).get().then(snap => {
+          db.collection('students').where('name', '==', n).get().then(snap => {
             snap.forEach(doc => doc.ref.delete());
             setStudents(prev => prev.filter(x => x !== n));
             setAttendance(prev => {
@@ -208,7 +208,7 @@
               )
             ),
             React.createElement('div', { className: `${view === 'monthly' ? 'view-visible' : 'view-hidden'} view-panel` },
-              React.createElement('input', { type: 'month', value: month, onChange: e => setMonth(e.target.value), className: 'mt-6 mb-4' }),
+              React.createElement('input', { type: 'month', value: month, onChange: e => setMonth(e.target.value), className: 'mb-4' }),
               React.createElement('table', { className: 'w-full bg-white rounded shadow divide-y divide-gray-200' },
                 React.createElement('thead', { className: 'bg-pink-50' },
                   React.createElement('tr', null,
