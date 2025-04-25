@@ -23,7 +23,7 @@
     .view-panel { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
     .view-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
     .view-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+    .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
     input[type="date"], input[type="text"], input[type="month"] { flex: 1 1 auto; min-width: 120px; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
     .btn-add { background: linear-gradient(90deg, #ec4899, #db2777); color: #fff; padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: 600; transition: transform 0.1s ease; }
     .btn-add:active { transform: scale(0.98); }
@@ -208,7 +208,7 @@
               )
             ),
             React.createElement('div', { className: `${view === 'monthly' ? 'view-visible' : 'view-hidden'} view-panel` },
-              React.createElement('input', { type: 'month', value: month, onChange: e => setMonth(e.target.value), className: 'mt-4 mb-4' }),
+              React.createElement('input', { type: 'month', value: month, onChange: e => setMonth(e.target.value), className: 'mt-6 mb-4' }),
               React.createElement('table', { className: 'w-full bg-white rounded shadow divide-y divide-gray-200' },
                 React.createElement('thead', { className: 'bg-pink-50' },
                   React.createElement('tr', null,
