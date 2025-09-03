@@ -195,7 +195,10 @@
           docPdf.text('Mese - Presenze', 10, y);
           y += 10;
           Object.entries(monthlyCounts).forEach(([month, count]) => {
-            docPdf.text(`${month}: ${count}`, 10, y);
+            const date = new Date(`${month}-01`);
+            const monthName = date.toLocaleString('it-IT', { month: 'long' });
+            const year = date.getFullYear();
+            docPdf.text(`${monthName} ${year}: ${count}`, 10, y);
             y += 10;
           });
           docPdf.save(`${studentName}.pdf`);
