@@ -47,8 +47,9 @@
     .btn-confirm { background: #ef4444; color: #fff; }
     .btn-cancel { background: #9ca3af; color: #fff; }
     @media (max-width: 480px) { .nav-btn { padding: 0.5rem 0.25rem; font-size: 0.9rem; } .input-group { flex-direction: column; } input, .btn-add { width: 100%; } }
-  </style>
-</head>
+    </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
 <body>
   <div id="root"></div>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -175,6 +176,31 @@
           return { name: n, presenze: pres, assenze: abs };
         });
 
+        const downloadPdf = async (studentName) => {
+          const snap = await db.collection('attendance').get();
+          const monthlyCounts = {};
+          snap.forEach(doc => {
+            const data = doc.data();
+            if (data[studentName] === true) {
+              const m = doc.id.slice(0,7);
+              monthlyCounts[m] = (monthlyCounts[m] || 0) + 1;
+            }
+          });
+          const { jsPDF } = window.jspdf;
+          const docPdf = new jsPDF();
+          docPdf.setFontSize(16);
+          docPdf.text(`Presenze di ${studentName}`, 10, 10);
+          let y = 20;
+          docPdf.setFontSize(12);
+          docPdf.text('Mese - Presenze', 10, y);
+          y += 10;
+          Object.entries(monthlyCounts).forEach(([month, count]) => {
+            docPdf.text(`${month}: ${count}`, 10, y);
+            y += 10;
+          });
+          docPdf.save(`${studentName}.pdf`);
+        };
+
         return React.createElement(
           React.Fragment, null,
           React.createElement('div', { className: 'header' },
@@ -214,14 +240,18 @@
                   React.createElement('tr', null,
                     React.createElement('th', { className: 'p-2 text-left' }, 'Nome'),
                     React.createElement('th', { className: 'p-2 text-center' }, 'Presenze'),
-                    React.createElement('th', { className: 'p-2 text-center' }, 'Assenze')
+                    React.createElement('th', { className: 'p-2 text-center' }, 'Assenze'),
+                    React.createElement('th', { className: 'p-2 text-center' }, 'PDF')
                   )
                 ),
                 React.createElement('tbody', null,
                   stats.map(r => React.createElement('tr', { key: r.name, className: 'hover:bg-pink-50' },
                     React.createElement('td', { className: 'p-2' }, r.name),
                     React.createElement('td', { className: 'p-2 text-center' }, r.presenze),
-                    React.createElement('td', { className: 'p-2 text-center' }, r.assenze)
+                    React.createElement('td', { className: 'p-2 text-center' }, r.assenze),
+                    React.createElement('td', { className: 'p-2 text-center' },
+                      React.createElement('button', { className: 'text-pink-600 underline', onClick: () => downloadPdf(r.name) }, 'PDF')
+                    )
                   ))
                 )
               )
