@@ -1,280 +1,1039 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#db2777">
-  <title>Registro GiocoCoro</title>
-  <!-- App Icon for Home Screen -->
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Tailwind CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
-    body { font-family: 'Poppins', sans-serif; background: #f9f9f9; margin: 0; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-    #root { max-width: 600px; margin: 0 auto; padding: 1rem; }
-    .header { background: linear-gradient(90deg, #ec4899, #db2777); text-align: center; color: #fff; padding: 1.5rem 1rem 1rem; border-radius: 0.5rem; }
-    .nav { display: flex; margin-top: 0.5rem; }
-    .nav-btn { flex: 1; text-align: center; padding: 0.75rem 0.5rem; font-weight: 600; cursor: pointer; transition: color 0.2s; }
-    .nav-active { border-bottom: 3px solid #fff; }
-    .view-container { position: relative; margin-top: 1rem; min-height: 200px; }
-    .view-panel { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
-    .view-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
-    .view-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
-    input[type="date"], input[type="text"], input[type="month"] { flex: 1 1 auto; min-width: 120px; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-    .btn-add { background: linear-gradient(90deg, #ec4899, #db2777); color: #fff; padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: 600; transition: transform 0.1s ease; }
-    .btn-add:active { transform: scale(0.98); }
-    .student-item { background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .status-btn { min-width: 6rem; padding: 0.5rem; border-radius: 9999px; font-weight: 600; transition: background-color 0.2s ease, transform 0.2s ease; }
-    .status-btn.default { background: #e5e7eb; color: #374151; }
-    .status-btn.present { background: #10b981; color: #fff; }
-    .status-btn.absent { background: #ef4444; color: #fff; }
-    .status-btn:hover { transform: scale(1.05); }
-    .delete-btn { background: none; border: none; color: #e11d48; font-size: 1.25rem; cursor: pointer; margin-left: 0.5rem; }
-    .delete-btn:hover { background: #fee2e2; border-radius: 0.375rem; }
-    .stats-btn { width: 100%; background: #f59e0b; color: #fff; padding: 0.75rem; font-weight: 600; border-radius: 0.375rem; margin: 1rem 0 0.5rem; }
-    .stats-container { overflow: hidden; transition: max-height 0.3s ease; }
-    .stats-collapsed { max-height: 0; }
-    .stats-expanded { max-height: 300px; }
-    @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-    .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:50; }
-    .modal { background: #fff; border-radius: 0.5rem; padding: 1.5rem; width: 90%; max-width: 400px; border-top: 4px solid #ec4899; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: fadeInScale 0.2s ease-out; }
-    .modal p { margin-bottom: 1rem; }
-    .modal button { margin: 0 0.5rem; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; }
-    .btn-confirm { background: #ef4444; color: #fff; }
-    .btn-cancel { background: #9ca3af; color: #fff; }
-    @media (max-width: 480px) { .nav-btn { padding: 0.5rem 0.25rem; font-size: 0.9rem; } .input-group { flex-direction: column; } input, .btn-add { width: 100%; } }
-    </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  </head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c23a7a">
+<title>Registro GiocoCoro — Cuccioli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root {
+    /* Neutrali caldi — bassa saturazione */
+    --bg: oklch(98.5% 0.008 50);
+    --surface: oklch(100% 0 0);
+    --surface-2: oklch(97% 0.01 40);
+    --border: oklch(92% 0.012 40);
+    --border-strong: oklch(85% 0.015 40);
+    --ink: oklch(22% 0.018 40);
+    --ink-2: oklch(42% 0.015 40);
+    --ink-3: oklch(58% 0.012 40);
+
+    /* Accenti — stessa chroma/L, hue diverso */
+    --primary: oklch(55% 0.17 355);        /* rosa/magenta V2 rifinito */
+    --primary-ink: oklch(38% 0.14 355);
+    --primary-soft: oklch(96% 0.025 355);
+    --primary-soft-2: oklch(92% 0.04 355);
+
+    --present: oklch(62% 0.12 155);        /* verde calmo */
+    --present-ink: oklch(40% 0.10 155);
+    --present-soft: oklch(95% 0.03 155);
+
+    --absent: oklch(63% 0.14 35);          /* ambra/ruggine — meno aggressivo del rosso puro */
+    --absent-ink: oklch(42% 0.12 35);
+    --absent-soft: oklch(95% 0.03 35);
+
+    --radius: 14px;
+    --radius-sm: 10px;
+    --radius-lg: 22px;
+
+    --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.04), 0 1px 1px oklch(0% 0 0 / 0.03);
+    --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.04), 0 8px 24px oklch(0% 0 0 / 0.06);
+    --shadow-lg: 0 24px 64px oklch(0% 0 0 / 0.18);
+
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    line-height: 1.45;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input { font-family: inherit; color: inherit; }
+  input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Scrollbar sottile */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* Text utilities */
+  .num { font-family: var(--font-serif); font-weight: 400; letter-spacing: -0.01em; }
+  .mono-tag { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* Anim */
+  @keyframes pop { 0% { transform: scale(0.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+</style>
+</head>
 <body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA4TzdjNP4roonlqd9Pz5Nebs7Q2xQjcOo",
-      authDomain: "registro-giococoro-v2.firebaseapp.com",
-      projectId: "registro-giococoro-v2",
-      storageBucket: "registro-giococoro-v2.firebasestorage.app",
-      messagingSenderId: "241025435819",
-      appId: "1:241025435819:web:081adbe21b592a0eda8fee"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-  <script>
-    (function() {
-      const { useState, useEffect } = React;
-      function App() {
-        const today = new Date().toISOString().split('T')[0];
-        const [view, setView] = useState('daily');
-        const [date, setDate] = useState(today);
-        const [month, setMonth] = useState(today.slice(0,7));
-        const [students, setStudents] = useState([]);
-        const [attendance, setAttendance] = useState({});
-        const [newName, setNewName] = useState('');
-        const [showStats, setShowStats] = useState(false);
-        const [pendingDelete, setPendingDelete] = useState(null);
+<div id="root"></div>
+<script type="application/json" id="mock-seed">
+{
+  "students": [
+    "Alice Benassi","Beatrice Conti","Chiara De Luca","Davide Marchetti","Elena Ferrari",
+    "Federico Gallo","Giulia Moretti","Lorenzo Neri","Martina Pellegrini","Nicolò Ricci",
+    "Pietro Romano","Sara Santoro","Tommaso Vitali"
+  ]
+}
+</script>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useRef } = React;
 
-        // Fetch students once
-        useEffect(() => {
-          db.collection('students').get().then(snap => setStudents(snap.docs.map(d => d.data().name)));
-        }, []);
+/* ──────────────────────────────────────────────────────────────
+   MOCK DATA (sostituisce Firestore per il prototipo)
+────────────────────────────────────────────────────────────── */
+const seed = JSON.parse(document.getElementById('mock-seed').textContent);
+const todayISO = () => new Date().toISOString().split('T')[0];
+const pad = n => String(n).padStart(2, '0');
 
-        // Fetch daily attendance when date or students change
-        useEffect(() => {
-          if (!students.length) return;
-          db.collection('attendance').doc(date).get().then(doc => {
-            if (doc.exists) setAttendance(prev => ({ ...prev, [date]: doc.data() }));
-            else {
-              const init = {};
-              students.forEach(n => init[n] = null);
-              db.collection('attendance').doc(date).set(init);
-              setAttendance(prev => ({ ...prev, [date]: init }));
-            }
-          });
-        }, [date, students]);
+// Genera ~2 mesi di dati plausibili: ~70% presenti, ~20% assenti, ~10% non definito
+function buildInitialAttendance(names) {
+  const out = {};
+  const today = new Date();
+  for (let i = 0; i < 60; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dow = d.getDay();
+    // Saltiamo domenica/lunedì per realismo (coro ~ 2-3 volte a settimana)
+    if (dow === 0 || dow === 1 || dow === 3) continue;
+    const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const rec = {};
+    names.forEach(n => {
+      const r = Math.random();
+      rec[n] = r < 0.72 ? true : r < 0.90 ? false : null;
+    });
+    out[key] = rec;
+  }
+  // Oggi: vuoto (da compilare live)
+  const t = todayISO();
+  if (!out[t]) {
+    const rec = {};
+    names.forEach(n => rec[n] = null);
+    out[t] = rec;
+  }
+  return out;
+}
 
-        // Fetch entire month's attendance when month changes
-        useEffect(() => {
-          if (!students.length) return;
-          const start = month;
-          const end = month + "\uf8ff";
-          db.collection('attendance')
-            .orderBy(firebase.firestore.FieldPath.documentId())
-            .startAt(start)
-            .endAt(end)
-            .get()
-            .then(snapshot => {
-              const monthly = {};
-              snapshot.docs.forEach(doc => { monthly[doc.id] = doc.data(); });
-              setAttendance(prev => ({ ...prev, ...monthly }));
-            });
-        }, [month, students]);
+/* ──────────────────────────────────────────────────────────────
+   HELPERS
+────────────────────────────────────────────────────────────── */
+function initialsOf(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+// Colore avatar stabile per nome (hue only, stessa L/C)
+function hueOf(name) {
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+function formatDateLong(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+function formatMonthLong(m) {
+  const d = new Date(m + '-01T00:00:00');
+  return d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+}
+function isToday(iso) { return iso === todayISO(); }
+function shiftMonth(m, delta) {
+  const [y, mm] = m.split('-').map(Number);
+  const d = new Date(y, mm - 1 + delta, 1);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+}
+function shiftDay(iso, delta) {
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
 
-        // Toggle presence
-        const toggleStatus = name => {
-          const dayRec = { ...(attendance[date] || {}) };
-          const cur = dayRec[name];
-          dayRec[name] = cur === null ? true : cur === true ? false : null;
-          setAttendance(prev => ({ ...prev, [date]: dayRec }));
-          db.collection('attendance').doc(date).set(dayRec);
-        };
+/* ──────────────────────────────────────────────────────────────
+   COMPONENTS
+────────────────────────────────────────────────────────────── */
 
-        // Add a new student
-        const addStudent = () => {
-          const n = newName.trim();
-          if (!n || students.includes(n)) return;
-          db.collection('students').add({ name: n }).then(() => {
-            setStudents(prev => [...prev, n]);
-            setNewName('');
-            const dayRec = { ...(attendance[date] || {}) };
-            dayRec[n] = null;
-            db.collection('attendance').doc(date).set(dayRec);
-            setAttendance(prev => ({ ...prev, [date]: dayRec }));
-          });
-        };
+function Avatar({ name, size = 40 }) {
+  const hue = hueOf(name);
+  const bg = `oklch(92% 0.035 ${hue})`;
+  const fg = `oklch(35% 0.09 ${hue})`;
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '999px',
+      background: bg, color: fg,
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      fontWeight: 600, fontSize: size * 0.38, flexShrink: 0,
+      letterSpacing: '0.02em',
+    }}>
+      {initialsOf(name)}
+    </div>
+  );
+}
 
-        // Confirm delete
-        const confirmDelete = () => {
-          const n = pendingDelete;
-          db.collection('students').where('name', '==', n).get().then(snap => {
-            snap.forEach(doc => doc.ref.delete());
-            setStudents(prev => prev.filter(x => x !== n));
-            setAttendance(prev => {
-              const upd = {};
-              Object.entries(prev).forEach(([d, rec]) => {
-                const c = { ...rec }; delete c[n]; upd[d] = c;
-              });
-              return upd;
-            });
-            setPendingDelete(null);
-          });
-        };
-
-        const cancelDelete = () => setPendingDelete(null);
-
-        // Compute counts filtering by current students
-        const dayRec = attendance[date] || {};
-        const presentCount = students.filter(n => dayRec[n] === true).length;
-        const absentCount  = students.filter(n => dayRec[n] === false).length;
-
-        // Prepare monthly stats
-        const monthDates = Object.keys(attendance).filter(d => d.startsWith(month));
-        const stats = students.map(n => {
-          let pres = 0, abs = 0;
-          monthDates.forEach(d => {
-            const v = attendance[d]?.[n];
-            if (v === true) pres++; else if (v === false) abs++;
-          });
-          return { name: n, presenze: pres, assenze: abs };
-        });
-
-        const downloadPdf = async (studentName) => {
-          const snap = await db.collection('attendance').get();
-          const monthlyCounts = {};
-          snap.forEach(doc => {
-            const data = doc.data();
-            if (data[studentName] === true) {
-              const m = doc.id.slice(0,7);
-              monthlyCounts[m] = (monthlyCounts[m] || 0) + 1;
-            }
-          });
-          const { jsPDF } = window.jspdf;
-          const docPdf = new jsPDF();
-          docPdf.setFontSize(16);
-          docPdf.text(`Presenze di ${studentName}`, 10, 10);
-          let y = 20;
-          docPdf.setFontSize(12);
-          docPdf.text('Mese - Presenze', 10, y);
-          y += 10;
-          Object.entries(monthlyCounts).forEach(([month, count]) => {
-            const date = new Date(`${month}-01`);
-            const monthName = date.toLocaleString('it-IT', { month: 'long' });
-            const year = date.getFullYear();
-            docPdf.text(`${monthName} ${year}: ${count}`, 10, y);
-            y += 10;
-          });
-          docPdf.save(`${studentName}.pdf`);
-        };
-
-        return React.createElement(
-          React.Fragment, null,
-          React.createElement('div', { className: 'header' },
-            React.createElement('h1', { className: 'text-2xl font-bold text-center' }, 'Registro GiocoCoro'),
-            React.createElement('div', { className: 'nav' },
-              React.createElement('div', { className: `nav-btn ${view === 'daily' ? 'nav-active' : ''}`, onClick: () => setView('daily') }, 'Giornaliera'),
-              React.createElement('div', { className: `nav-btn ${view === 'monthly' ? 'nav-active' : ''}`, onClick: () => setView('monthly') }, 'Mensile')
-            )
-          ),
-          React.createElement('div', { className: 'view-container' },
-            React.createElement('div', { className: `${view === 'daily' ? 'view-visible' : 'view-hidden'} view-panel` },
-              React.createElement('div', { className: 'input-group' },
-                React.createElement('input', { type: 'date', value: date, onChange: e => setDate(e.target.value) }),
-                React.createElement('input', { type: 'text', placeholder: 'Nuovo studente', value: newName, onChange: e => setNewName(e.target.value) }),
-                React.createElement('button', { className: 'btn-add', onClick: addStudent }, 'Aggiungi')
-              ),
-              students.map(n => React.createElement('div', { key: n, className: 'student-item' },
-                React.createElement('span', null, n),
-                React.createElement('div', null,
-                  React.createElement('button', { className: `status-btn ${dayRec[n] === true ? 'present' : dayRec[n] === false ? 'absent' : 'default'}`, onClick: () => toggleStatus(n) }, dayRec[n] === true ? 'Presente' : dayRec[n] === false ? 'Assente' : 'Non definito'),
-                  React.createElement('button', { className: 'delete-btn', onClick: () => setPendingDelete(n) }, '×')
-                )
-              )),
-              React.createElement('button', { className: 'stats-btn', onClick: () => setShowStats(s => !s) }, showStats ? 'Nascondi Statistiche' : 'Mostra Statistiche'),
-              React.createElement('div', { className: `stats-container ${showStats ? 'stats-expanded' : 'stats-collapsed'}` },
-                React.createElement('div', { className: 'bg-white p-4 rounded shadow' },
-                  React.createElement('p', null, `Presenti: ${presentCount}`),
-                  React.createElement('p', null, `Assenti: ${absentCount}`),
-                  React.createElement('p', null, `Iscritti: ${students.length}`)
-                )
-              )
-            ),
-            React.createElement('div', { className: `${view === 'monthly' ? 'view-visible' : 'view-hidden'} view-panel` },
-              React.createElement('input', { type: 'month', value: month, onChange: e => setMonth(e.target.value), className: 'mb-4' }),
-              React.createElement('table', { className: 'w-full bg-white rounded shadow divide-y divide-gray-200' },
-                React.createElement('thead', { className: 'bg-pink-50' },
-                  React.createElement('tr', null,
-                    React.createElement('th', { className: 'p-2 text-left' }, 'Nome'),
-                    React.createElement('th', { className: 'p-2 text-center' }, 'Presenze'),
-                    React.createElement('th', { className: 'p-2 text-center' }, 'Assenze'),
-                    React.createElement('th', { className: 'p-2 text-center' }, 'PDF')
-                  )
-                ),
-                React.createElement('tbody', null,
-                  stats.map(r => React.createElement('tr', { key: r.name, className: 'hover:bg-pink-50' },
-                    React.createElement('td', { className: 'p-2' }, r.name),
-                    React.createElement('td', { className: 'p-2 text-center' }, r.presenze),
-                    React.createElement('td', { className: 'p-2 text-center' }, r.assenze),
-                    React.createElement('td', { className: 'p-2 text-center' },
-                      React.createElement('button', { className: 'text-pink-600 underline', onClick: () => downloadPdf(r.name) }, 'PDF')
-                    )
-                  ))
-                )
-              )
-            )
-          ),
-          pendingDelete && React.createElement('div', { className: 'modal-backdrop' },
-            React.createElement('div', { className: 'modal' },
-              React.createElement('p', null, `Sei sicuro di voler eliminare ${pendingDelete}?`),
-              React.createElement('div', { className: 'flex justify-end' },
-                React.createElement('button', { className: 'btn-confirm', onClick: confirmDelete }, 'Sì'),
-                React.createElement('button', { className: 'btn-cancel', onClick: cancelDelete }, 'No')
-              )
-            )
-          )
+function StatusSegmented({ value, onChange }) {
+  // value: true = presente, false = assente, null = non definito
+  const states = [
+    { k: 'P', v: true,  label: 'Presente', color: 'var(--present)', soft: 'var(--present-soft)', ink: 'var(--present-ink)' },
+    { k: '·', v: null,  label: 'Non definito', color: 'var(--ink-2)', soft: 'var(--surface-2)', ink: 'var(--ink-2)' },
+    { k: 'A', v: false, label: 'Assente', color: 'var(--absent)', soft: 'var(--absent-soft)', ink: 'var(--absent-ink)' },
+  ];
+  return (
+    <div role="radiogroup" aria-label="Stato presenza" style={{
+      display: 'inline-flex',
+      padding: 3,
+      background: 'var(--surface-2)',
+      border: '1px solid var(--border)',
+      borderRadius: 999,
+      gap: 2,
+    }}>
+      {states.map(s => {
+        const active = value === s.v;
+        return (
+          <button
+            key={s.k}
+            role="radio"
+            aria-checked={active}
+            aria-label={s.label}
+            onClick={() => onChange(s.v)}
+            style={{
+              minWidth: 36, height: 30,
+              borderRadius: 999,
+              padding: '0 10px',
+              fontSize: 13, fontWeight: 600,
+              color: active ? '#fff' : s.ink,
+              background: active ? s.color : 'transparent',
+              transition: 'background .18s ease, color .18s ease, transform .1s ease',
+              animation: active ? 'pop .25s ease' : 'none',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            {s.k === '·' ? <span style={{fontSize: 20, lineHeight: 0, marginTop: -4}}>·</span> : s.k}
+          </button>
         );
+      })}
+    </div>
+  );
+}
+
+function StatusPillFull({ value, onChange }) {
+  // Versione larga per desktop: 3 bottoni separati chiari
+  const items = [
+    { v: true, label: 'Presente', color: 'var(--present)', ink: 'var(--present-ink)', soft: 'var(--present-soft)' },
+    { v: null, label: 'Da definire', color: 'var(--ink-3)', ink: 'var(--ink-2)', soft: 'var(--surface-2)' },
+    { v: false, label: 'Assente', color: 'var(--absent)', ink: 'var(--absent-ink)', soft: 'var(--absent-soft)' },
+  ];
+  return (
+    <div role="radiogroup" style={{ display: 'flex', gap: 6 }}>
+      {items.map(it => {
+        const active = value === it.v;
+        return (
+          <button key={String(it.v)}
+            role="radio" aria-checked={active}
+            onClick={() => onChange(it.v)}
+            style={{
+              padding: '8px 14px',
+              borderRadius: 999,
+              fontSize: 13, fontWeight: 600,
+              color: active ? '#fff' : it.ink,
+              background: active ? it.color : it.soft,
+              border: `1px solid ${active ? it.color : 'var(--border)'}`,
+              transition: 'all .18s ease',
+            }}
+          >{it.label}</button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StudentRow({ name, status, onToggle, onDelete, compact }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: compact ? 10 : 14,
+      padding: compact ? '12px 12px' : '14px 16px',
+      background: 'var(--surface)',
+      borderBottom: '1px solid var(--border)',
+      transition: 'background .15s ease',
+      flexWrap: compact ? 'wrap' : 'nowrap',
+    }}
+    onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+    onMouseLeave={e => e.currentTarget.style.background = 'var(--surface)'}
+    >
+      <Avatar name={name} size={compact ? 36 : 42} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: compact ? 14.5 : 15.5, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {name}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
+          {status === true ? 'Presente' : status === false ? 'Assente' : 'Non definito'}
+        </div>
+      </div>
+      {compact
+        ? <StatusSegmented value={status} onChange={onToggle} />
+        : <StatusPillFull value={status} onChange={onToggle} />
       }
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(App));
-    })();
-  </script>
+      <button
+        onClick={onDelete}
+        aria-label={`Elimina ${name}`}
+        style={{
+          width: 34, height: 34, borderRadius: 8,
+          color: 'var(--ink-3)', flexShrink: 0,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all .15s ease',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'var(--absent-soft)'; e.currentTarget.style.color = 'var(--absent-ink)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-3)'; }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function StatCard({ label, value, accent, compact }) {
+  return (
+    <div style={{
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: 'var(--radius)',
+      padding: compact ? '12px 14px' : '16px 18px',
+      flex: 1, minWidth: 0,
+      display: 'flex', flexDirection: 'column', gap: compact ? 4 : 6,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div className="mono-tag" style={{ fontSize: compact ? 10 : 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <div className="num" style={{ fontSize: compact ? 32 : 44, lineHeight: 1, color: accent || 'var(--ink)' }}>{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function Modal({ title, body, confirmLabel, onConfirm, onCancel, danger }) {
+  return (
+    <div
+      onClick={onCancel}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'oklch(15% 0.02 40 / 0.45)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 60, padding: 20,
+        animation: 'backdropIn .15s ease',
+      }}>
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--surface)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 28,
+          maxWidth: 400, width: '100%',
+          boxShadow: 'var(--shadow-lg)',
+          animation: 'modalIn .2s ease',
+          border: '1px solid var(--border)',
+        }}>
+        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>{title}</h3>
+        <p style={{ margin: '8px 0 24px', color: 'var(--ink-2)', fontSize: 14.5, lineHeight: 1.55 }}>{body}</p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <button onClick={onCancel} style={{
+            padding: '10px 18px', borderRadius: 10, fontWeight: 600, fontSize: 14,
+            background: 'var(--surface-2)', color: 'var(--ink)',
+            border: '1px solid var(--border)',
+          }}>Annulla</button>
+          <button onClick={onConfirm} style={{
+            padding: '10px 18px', borderRadius: 10, fontWeight: 600, fontSize: 14,
+            background: danger ? 'var(--absent)' : 'var(--primary)',
+            color: '#fff',
+          }}>{confirmLabel}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Toast({ message }) {
+  if (!message) return null;
+  return (
+    <div style={{
+      position: 'fixed', bottom: 'calc(20px + var(--safe-bottom))', left: '50%',
+      transform: 'translateX(-50%)',
+      background: 'var(--ink)',
+      color: 'var(--bg)',
+      padding: '10px 18px', borderRadius: 999,
+      fontSize: 13.5, fontWeight: 500,
+      boxShadow: 'var(--shadow-md)',
+      zIndex: 70,
+      animation: 'fadeUp .2s ease',
+    }}>{message}</div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
+   DAILY VIEW
+────────────────────────────────────────────────────────────── */
+function DailyView({ date, setDate, students, attendance, setAttendance, onAddStudent, onDeleteStudent, compact, flash }) {
+  const [newName, setNewName] = useState('');
+  const [query, setQuery] = useState('');
+  const dayRec = attendance[date] || {};
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return students;
+    return students.filter(n => n.toLowerCase().includes(q));
+  }, [students, query]);
+
+  const present = students.filter(n => dayRec[n] === true).length;
+  const absent = students.filter(n => dayRec[n] === false).length;
+  const pending = students.length - present - absent;
+
+  const toggle = (name, next) => {
+    const updated = { ...dayRec, [name]: next };
+    setAttendance(prev => ({ ...prev, [date]: updated }));
+  };
+
+  const markAllPresent = () => {
+    const updated = { ...dayRec };
+    students.forEach(n => { updated[n] = true; });
+    setAttendance(prev => ({ ...prev, [date]: updated }));
+    flash('Tutti segnati presenti');
+  };
+
+  const addStudent = () => {
+    const n = newName.trim();
+    if (!n) return;
+    if (students.includes(n)) { flash('Nome già presente'); return; }
+    onAddStudent(n);
+    setNewName('');
+    flash(`${n} aggiunto/a`);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Date + context */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'stretch',
+          width: compact ? '100%' : 'auto',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 999,
+          overflow: 'hidden',
+        }}>
+          <button
+            onClick={() => setDate(shiftDay(date, -1))}
+            aria-label="Giorno precedente"
+            style={{
+              padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+              color: 'var(--ink-2)', borderRight: '1px solid var(--border)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <label style={{
+            position: 'relative',
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px',
+            cursor: 'pointer',
+            flex: compact ? 1 : 'initial',
+            justifyContent: 'center',
+            minWidth: 0,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color: 'var(--ink-3)', flexShrink: 0}}>
+              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <span style={{ fontSize: compact ? 13 : 14, fontWeight: 500, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {compact ? new Date(date+'T00:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) : formatDateLong(date)}
+            </span>
+            {isToday(date) && (
+              <span style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.06em',
+                padding: '2px 6px', borderRadius: 999, flexShrink: 0,
+                background: 'var(--primary-soft)', color: 'var(--primary-ink)',
+              }}>OGGI</span>
+            )}
+            <input
+              type="date" value={date} onChange={e => setDate(e.target.value)}
+              style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
+            />
+          </label>
+          <button
+            onClick={() => setDate(shiftDay(date, 1))}
+            aria-label="Giorno successivo"
+            style={{
+              padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+              color: 'var(--ink-2)', borderLeft: '1px solid var(--border)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        {!isToday(date) && (
+          <button onClick={() => setDate(todayISO())} style={{
+            fontSize: 13, fontWeight: 500, color: 'var(--primary-ink)',
+            padding: '6px 10px', borderRadius: 8,
+          }}>↩ Torna a oggi</button>
+        )}
+      </div>
+
+      {/* Stats hero */}
+      <div style={{ display: 'grid', gap: compact ? 8 : 12, gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
+        <StatCard label="Presenti" value={present} accent="var(--present-ink)" compact={compact} />
+        <StatCard label="Assenti" value={absent} accent="var(--absent-ink)" compact={compact} />
+        <StatCard label="Da definire" value={pending} accent="var(--ink-2)" compact={compact} />
+        <StatCard label="Iscritti" value={students.length} accent="var(--primary-ink)" compact={compact} />
+      </div>
+
+      {/* Toolbar: search + add + bulk */}
+      <div style={{
+        display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center',
+      }}>
+        <div style={{
+          flex: '1 1 180px', minWidth: 160,
+          position: 'relative',
+          display: 'flex', alignItems: 'center',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 999,
+          padding: '0 14px',
+        }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color: 'var(--ink-3)'}}>
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input
+            type="text" placeholder="Cerca…" value={query} onChange={e => setQuery(e.target.value)}
+            style={{
+              border: 0, outline: 0, background: 'transparent',
+              padding: '10px 12px', width: '100%', fontSize: 14,
+            }}
+          />
+        </div>
+        <div style={{
+          display: 'flex', flex: '2 1 260px', minWidth: 220,
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 999,
+          padding: 3,
+        }}>
+          <input
+            type="text" placeholder="Aggiungi studente…" value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && addStudent()}
+            style={{
+              border: 0, outline: 0, background: 'transparent',
+              padding: '10px 14px', flex: 1, fontSize: 14,
+            }}
+          />
+          <button onClick={addStudent} disabled={!newName.trim()} style={{
+            padding: '0 18px', borderRadius: 999, fontWeight: 600, fontSize: 14,
+            background: newName.trim() ? 'var(--primary)' : 'var(--surface-2)',
+            color: newName.trim() ? '#fff' : 'var(--ink-3)',
+            transition: 'all .2s ease',
+          }}>Aggiungi</button>
+        </div>
+        <button onClick={markAllPresent} style={{
+          padding: '10px 16px', borderRadius: 999, fontSize: 13.5, fontWeight: 600,
+          background: 'var(--present-soft)', color: 'var(--present-ink)',
+          border: '1px solid transparent',
+        }}>
+          ✓ Tutti presenti
+        </button>
+      </div>
+
+      {/* Student list */}
+      <div style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius)',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '12px 16px',
+          background: 'var(--surface-2)',
+          borderBottom: '1px solid var(--border)',
+        }}>
+          <div className="mono-tag">Iscritti · {filtered.length}</div>
+          <div className="mono-tag">Tap per cambiare stato</div>
+        </div>
+        {filtered.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)', fontSize: 14 }}>
+            Nessun risultato per "{query}"
+          </div>
+        ) : (
+          filtered.map(n => (
+            <StudentRow
+              key={n}
+              name={n}
+              status={dayRec[n] ?? null}
+              onToggle={v => toggle(n, v)}
+              onDelete={() => onDeleteStudent(n)}
+              compact={compact}
+            />
+          ))
+        )}
+      </div>
+
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MONTHLY VIEW
+────────────────────────────────────────────────────────────── */
+function MonthlyView({ month, setMonth, students, attendance, compact, flash }) {
+  const monthDates = useMemo(
+    () => Object.keys(attendance).filter(d => d.startsWith(month)).sort(),
+    [attendance, month]
+  );
+
+  const stats = useMemo(() => students.map(n => {
+    let pres = 0, abs = 0, nd = 0;
+    monthDates.forEach(d => {
+      const v = attendance[d]?.[n];
+      if (v === true) pres++; else if (v === false) abs++; else nd++;
+    });
+    const total = pres + abs;
+    const pct = total > 0 ? Math.round((pres / total) * 100) : 0;
+    return { name: n, presenze: pres, assenze: abs, nd, pct };
+  }), [students, monthDates, attendance]);
+
+  const totalSessions = monthDates.length;
+  const totalPresenze = stats.reduce((s, r) => s + r.presenze, 0);
+  const totalAssenze = stats.reduce((s, r) => s + r.assenze, 0);
+  const avgAttendance = (totalPresenze + totalAssenze) > 0
+    ? Math.round((totalPresenze / (totalPresenze + totalAssenze)) * 100) : 0;
+
+  const downloadPdf = (name) => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const monthlyCounts = {};
+    Object.entries(attendance).forEach(([d, rec]) => {
+      if (rec[name] === true) {
+        const m = d.slice(0, 7);
+        monthlyCounts[m] = (monthlyCounts[m] || 0) + 1;
+      }
+    });
+    doc.setFontSize(18);
+    doc.text(`Presenze — ${name}`, 15, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Registro GiocoCoro Cuccioli · esportato ${new Date().toLocaleDateString('it-IT')}`, 15, 27);
+    let y = 45;
+    doc.setTextColor(30);
+    doc.setFontSize(12);
+    doc.text('Mese', 15, y);
+    doc.text('Presenze', 120, y);
+    doc.line(15, y + 2, 195, y + 2);
+    y += 10;
+    Object.entries(monthlyCounts).sort().forEach(([m, c]) => {
+      const d = new Date(`${m}-01`);
+      const label = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+      doc.text(label.charAt(0).toUpperCase() + label.slice(1), 15, y);
+      doc.text(String(c), 120, y);
+      y += 8;
+    });
+    doc.save(`${name.replace(/\s+/g, '_')}.pdf`);
+    flash(`PDF di ${name} scaricato`);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Month selector */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{
+          display: 'flex', alignItems: 'stretch',
+          width: compact ? '100%' : 'auto',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 999,
+          overflow: 'hidden',
+        }}>
+          <button
+            onClick={() => setMonth(shiftMonth(month, -1))}
+            aria-label="Mese precedente"
+            style={{
+              padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+              color: 'var(--ink-2)', borderRight: '1px solid var(--border)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <label style={{
+            position: 'relative',
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            padding: '10px 16px',
+            cursor: 'pointer',
+            flex: compact ? 1 : 'initial',
+            minWidth: compact ? 0 : 180, justifyContent: 'center',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color: 'var(--ink-3)', flexShrink: 0}}>
+              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <span style={{ fontSize: compact ? 13 : 14, fontWeight: 500, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatMonthLong(month)}</span>
+            <input type="month" value={month} onChange={e => setMonth(e.target.value)} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+          </label>
+          <button
+            onClick={() => setMonth(shiftMonth(month, 1))}
+            aria-label="Mese successivo"
+            style={{
+              padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+              color: 'var(--ink-2)', borderLeft: '1px solid var(--border)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        {month !== todayISO().slice(0, 7) && (
+          <button onClick={() => setMonth(todayISO().slice(0, 7))} style={{
+            fontSize: 13, fontWeight: 500, color: 'var(--primary-ink)',
+            padding: '6px 10px', borderRadius: 8,
+          }}>↩ Mese corrente</button>
+        )}
+        <div className="mono-tag" style={{ marginLeft: compact ? 0 : 'auto' }}>{totalSessions} incontri</div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: 'grid', gap: compact ? 8 : 12, gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
+        <StatCard label="Incontri" value={totalSessions} accent="var(--ink)" compact={compact} />
+        <StatCard label="Presenze totali" value={totalPresenze} accent="var(--present-ink)" compact={compact} />
+        <StatCard label="Assenze totali" value={totalAssenze} accent="var(--absent-ink)" compact={compact} />
+        <StatCard label="Media frequenza" value={`${avgAttendance}%`} accent="var(--primary-ink)" compact={compact} />
+      </div>
+
+      {/* Table (desktop) / cards (mobile) */}
+      {compact ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {stats.map(r => (
+            <div key={r.name} style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius)',
+              padding: 16,
+              display: 'flex', flexDirection: 'column', gap: 12,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Avatar name={r.name} size={40} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, fontSize: 15 }}>{r.name}</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{r.pct}% frequenza</div>
+                </div>
+                <button onClick={() => downloadPdf(r.name)} aria-label={`Scarica PDF ${r.name}`} style={{
+                  padding: '8px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+                  background: 'var(--primary-soft)', color: 'var(--primary-ink)',
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+                  </svg>
+                  PDF
+                </button>
+              </div>
+              {/* Mini bar */}
+              <div style={{
+                display: 'flex', height: 8, borderRadius: 999, overflow: 'hidden',
+                background: 'var(--surface-2)', border: '1px solid var(--border)',
+              }}>
+                <div style={{ width: `${(r.presenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--present)' }} />
+                <div style={{ width: `${(r.assenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--absent)' }} />
+              </div>
+              <div style={{ display: 'flex', gap: 14, fontSize: 12.5, color: 'var(--ink-2)' }}>
+                <span><span className="num" style={{ fontSize: 18, color: 'var(--present-ink)' }}>{r.presenze}</span>  presenze</span>
+                <span><span className="num" style={{ fontSize: 18, color: 'var(--absent-ink)' }}>{r.assenze}</span>  assenze</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius)',
+          overflow: 'hidden',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'var(--surface-2)', borderBottom: '1px solid var(--border)' }}>
+                <th style={{ padding: '14px 18px', textAlign: 'left', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Nome</th>
+                <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Frequenza</th>
+                <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Presenze</th>
+                <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Assenze</th>
+                <th style={{ padding: '14px 18px', textAlign: 'right', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Export</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.map(r => (
+                <tr key={r.name} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '14px 18px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <Avatar name={r.name} size={34} />
+                      <span style={{ fontWeight: 600, fontSize: 14.5 }}>{r.name}</span>
+                    </div>
+                  </td>
+                  <td style={{ padding: '14px 18px', minWidth: 180 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{
+                        flex: 1, height: 6, borderRadius: 999, overflow: 'hidden',
+                        background: 'var(--surface-2)', display: 'flex',
+                      }}>
+                        <div style={{ width: `${(r.presenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--present)' }} />
+                        <div style={{ width: `${(r.assenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--absent)' }} />
+                      </div>
+                      <span className="num" style={{ fontSize: 18, color: 'var(--ink)', minWidth: 40, textAlign: 'right' }}>{r.pct}%</span>
+                    </div>
+                  </td>
+                  <td style={{ padding: '14px 18px', textAlign: 'center' }}>
+                    <span className="num" style={{ fontSize: 22, color: 'var(--present-ink)' }}>{r.presenze}</span>
+                  </td>
+                  <td style={{ padding: '14px 18px', textAlign: 'center' }}>
+                    <span className="num" style={{ fontSize: 22, color: 'var(--absent-ink)' }}>{r.assenze}</span>
+                  </td>
+                  <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                    <button onClick={() => downloadPdf(r.name)} style={{
+                      padding: '7px 14px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+                      background: 'var(--primary-soft)', color: 'var(--primary-ink)',
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      transition: 'all .15s ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-soft-2)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary-soft)'; }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+                      </svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
+   APP SHELL
+────────────────────────────────────────────────────────────── */
+function App() {
+  const [view, setView] = useState(() => localStorage.getItem('rgc:view') || 'daily');
+  const [date, setDate] = useState(todayISO());
+  const [month, setMonth] = useState(todayISO().slice(0, 7));
+  const [students, setStudents] = useState(seed.students);
+  const [attendance, setAttendance] = useState(() => buildInitialAttendance(seed.students));
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [toast, setToast] = useState('');
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    localStorage.setItem('rgc:view', view);
+  }, [view]);
+
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const compact = width < 720;
+
+  const flash = (msg) => {
+    setToast(msg);
+    clearTimeout(flash._t);
+    flash._t = setTimeout(() => setToast(''), 2000);
+  };
+
+  const addStudent = (n) => {
+    setStudents(prev => [...prev, n]);
+    setAttendance(prev => {
+      const copy = { ...prev };
+      const day = { ...(copy[date] || {}) };
+      day[n] = null;
+      copy[date] = day;
+      return copy;
+    });
+  };
+
+  const deleteStudent = (n) => {
+    setStudents(prev => prev.filter(x => x !== n));
+    setAttendance(prev => {
+      const out = {};
+      Object.entries(prev).forEach(([d, rec]) => {
+        const c = { ...rec }; delete c[n]; out[d] = c;
+      });
+      return out;
+    });
+    setPendingDelete(null);
+    flash(`${n} eliminato/a`);
+  };
+
+  return (
+    <div data-screen-label={view === 'daily' ? '01 Giornaliera' : '02 Mensile'}>
+
+      {/* ── Header ── */}
+      <header style={{
+        background: 'var(--surface)',
+        borderBottom: '1px solid var(--border)',
+        position: 'sticky', top: 0, zIndex: 30,
+        backdropFilter: 'blur(12px)',
+      }}>
+        <div style={{
+          maxWidth: 1080, margin: '0 auto',
+          padding: `${compact ? '14px' : '18px'} ${compact ? '18px' : '32px'}`,
+          display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+        }}>
+          {/* Logo lockup */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: 'var(--primary)',
+              display: 'grid', placeItems: 'center',
+              color: '#fff',
+              boxShadow: 'inset 0 -2px 0 oklch(0% 0 0 / 0.08)',
+              position: 'relative', overflow: 'hidden',
+            }}>
+              {/* Simple music-note glyph */}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>Registro GiocoCoro</div>
+              <div style={{ fontSize: 12, color: 'var(--ink-3)', fontWeight: 500, letterSpacing: '0.02em' }}>Cuccioli</div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <nav style={{
+            marginLeft: 'auto',
+            display: 'flex',
+            background: 'var(--surface-2)',
+            border: '1px solid var(--border)',
+            borderRadius: 999,
+            padding: 3,
+          }}>
+            {[
+              { k: 'daily', label: 'Giornaliera' },
+              { k: 'monthly', label: 'Mensile' },
+            ].map(t => (
+              <button key={t.k} onClick={() => setView(t.k)} style={{
+                padding: '8px 18px',
+                borderRadius: 999,
+                fontSize: 13.5, fontWeight: 600,
+                background: view === t.k ? 'var(--surface)' : 'transparent',
+                color: view === t.k ? 'var(--ink)' : 'var(--ink-3)',
+                boxShadow: view === t.k ? 'var(--shadow-sm)' : 'none',
+                transition: 'all .2s ease',
+              }}>{t.label}</button>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      {/* ── Main ── */}
+      <main style={{
+        maxWidth: 1080, margin: '0 auto',
+        padding: `${compact ? '20px 14px 64px' : '32px 32px 96px'}`,
+      }}>
+        {/* Page title */}
+        <div style={{ marginBottom: compact ? 18 : 24 }}>
+          <div className="mono-tag" style={{ marginBottom: 8 }}>
+            {view === 'daily' ? '· Vista giornaliera' : '· Vista mensile'}
+          </div>
+          <h1 style={{
+            margin: 0,
+            fontSize: compact ? 30 : 44,
+            lineHeight: 1.05,
+            letterSpacing: '-0.02em',
+            fontWeight: 400,
+            fontFamily: 'var(--font-serif)',
+            textWrap: 'balance',
+          }}>
+            {view === 'daily' ? (
+              <>Chi c'è <em style={{ color: 'var(--primary-ink)', fontStyle: 'italic' }}>oggi</em>?</>
+            ) : (
+              <>Il mese, <em style={{ color: 'var(--primary-ink)', fontStyle: 'italic' }}>a colpo d'occhio</em>.</>
+            )}
+          </h1>
+        </div>
+
+        {view === 'daily' ? (
+          <DailyView
+            date={date} setDate={setDate}
+            students={students}
+            attendance={attendance} setAttendance={setAttendance}
+            onAddStudent={addStudent}
+            onDeleteStudent={n => setPendingDelete(n)}
+            compact={compact}
+            flash={flash}
+          />
+        ) : (
+          <MonthlyView
+            month={month} setMonth={setMonth}
+            students={students} attendance={attendance}
+            compact={compact}
+            flash={flash}
+          />
+        )}
+      </main>
+
+      {pendingDelete && (
+        <Modal
+          title={`Eliminare ${pendingDelete}?`}
+          body="Verranno rimossi anche tutti i dati di presenza relativi, in ogni data. L'azione è irreversibile."
+          confirmLabel="Elimina"
+          danger
+          onConfirm={() => deleteStudent(pendingDelete)}
+          onCancel={() => setPendingDelete(null)}
+        />
+      )}
+
+      <Toast message={toast} />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
 </body>
 </html>
-
