@@ -15,12 +15,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-Qn3GWWAFHjWQlzF5fUDNUXrHPmHJ5CjnGxBhVbqJwYRFpg+MC4jjFMPdOeJ+bCn" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-nEnANBFT4LRNBkwVCN4r92Z5OEj9VEX3wADiW8P7zq8gKAWYyVASmsMfqYBTMrFN" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <style>
   :root {
-    /* Neutrali caldi — bassa saturazione */
     --bg: oklch(98.5% 0.008 50);
     --surface: oklch(100% 0 0);
     --surface-2: oklch(97% 0.01 40);
@@ -30,17 +29,16 @@
     --ink-2: oklch(42% 0.015 40);
     --ink-3: oklch(58% 0.012 40);
 
-    /* Accenti — stessa chroma/L, hue diverso */
-    --primary: oklch(55% 0.17 355);        /* rosa/magenta V2 rifinito */
+    --primary: oklch(55% 0.17 355);
     --primary-ink: oklch(38% 0.14 355);
     --primary-soft: oklch(96% 0.025 355);
     --primary-soft-2: oklch(92% 0.04 355);
 
-    --present: oklch(62% 0.12 155);        /* verde calmo */
+    --present: oklch(62% 0.12 155);
     --present-ink: oklch(40% 0.10 155);
     --present-soft: oklch(95% 0.03 155);
 
-    --absent: oklch(63% 0.14 35);          /* ambra/ruggine — meno aggressivo del rosso puro */
+    --absent: oklch(63% 0.14 35);
     --absent-ink: oklch(42% 0.12 35);
     --absent-soft: oklch(95% 0.03 35);
 
@@ -79,16 +77,13 @@
     border-radius: var(--radius-sm);
   }
 
-  /* Scrollbar sottile */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
 
-  /* Text utilities */
   .num { font-family: var(--font-serif); font-weight: 400; letter-spacing: -0.01em; }
   .mono-tag { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
 
-  /* Anim */
   @keyframes pop { 0% { transform: scale(0.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -128,7 +123,7 @@ function CalendarPicker({ value, onChange, onClose }) {
   const [viewMonth, setViewMonth] = useState(sel.getMonth());
   const today = new Date(todayISO() + 'T00:00:00');
 
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=sun
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const startOffset = (firstDay + 6) % 7; // Mon-based
 
@@ -150,7 +145,6 @@ function CalendarPicker({ value, onChange, onClose }) {
       padding: 16, minWidth: 280,
       animation: 'fadeUp .15s ease',
     }}>
-      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
         <button onClick={prevMonth} style={{ padding: '4px 8px', borderRadius: 8, color: 'var(--ink-2)' }}
           onMouseEnter={e => e.currentTarget.style.background='var(--surface-2)'}
@@ -164,11 +158,9 @@ function CalendarPicker({ value, onChange, onClose }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </div>
-      {/* Day labels */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
         {days.map(d => <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: 'var(--ink-3)', padding: '4px 0' }}>{d}</div>)}
       </div>
-      {/* Day cells */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
         {cells.map((d, i) => {
           if (!d) return <div key={i} />;
@@ -249,25 +241,30 @@ function initialsOf(name) {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
-// Colore avatar stabile per nome (hue only, stessa L/C)
+
 function hueOf(name) {
   let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return h % 360;
 }
+
 function formatDateLong(iso) {
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
+
 function formatMonthLong(m) {
   const d = new Date(m + '-01T00:00:00');
   return d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
 }
+
 function isToday(iso) { return iso === todayISO(); }
+
 function shiftMonth(m, delta) {
   const [y, mm] = m.split('-').map(Number);
   const d = new Date(y, mm - 1 + delta, 1);
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
 }
+
 function shiftDay(iso, delta) {
   const d = new Date(iso + 'T00:00:00');
   d.setDate(d.getDate() + delta);
@@ -296,11 +293,10 @@ function Avatar({ name, size = 40 }) {
 }
 
 function StatusSegmented({ value, onChange }) {
-  // value: true = presente, false = assente, null = non definito
   const states = [
-    { k: 'P', v: true,  label: 'Presente', color: 'var(--present)', soft: 'var(--present-soft)', ink: 'var(--present-ink)' },
-    { k: '·', v: null,  label: 'Non definito', color: 'var(--ink-2)', soft: 'var(--surface-2)', ink: 'var(--ink-2)' },
-    { k: 'A', v: false, label: 'Assente', color: 'var(--absent)', soft: 'var(--absent-soft)', ink: 'var(--absent-ink)' },
+    { k: 'P', v: true,  label: 'Presente',     color: 'var(--present)', soft: 'var(--present-soft)', ink: 'var(--present-ink)' },
+    { k: '·', v: null,  label: 'Non definito',  color: 'var(--ink-2)',   soft: 'var(--surface-2)',    ink: 'var(--ink-2)' },
+    { k: 'A', v: false, label: 'Assente',        color: 'var(--absent)',  soft: 'var(--absent-soft)',  ink: 'var(--absent-ink)' },
   ];
   return (
     <div role="radiogroup" aria-label="Stato presenza" style={{
@@ -341,11 +337,10 @@ function StatusSegmented({ value, onChange }) {
 }
 
 function StatusPillFull({ value, onChange }) {
-  // Versione larga per desktop: 3 bottoni separati chiari
   const items = [
-    { v: true, label: 'Presente', color: 'var(--present)', ink: 'var(--present-ink)', soft: 'var(--present-soft)' },
-    { v: null, label: 'Da definire', color: 'var(--ink-3)', ink: 'var(--ink-2)', soft: 'var(--surface-2)' },
-    { v: false, label: 'Assente', color: 'var(--absent)', ink: 'var(--absent-ink)', soft: 'var(--absent-soft)' },
+    { v: true,  label: 'Presente',    color: 'var(--present)', ink: 'var(--present-ink)', soft: 'var(--present-soft)' },
+    { v: null,  label: 'Da definire', color: 'var(--ink-3)',   ink: 'var(--ink-2)',       soft: 'var(--surface-2)' },
+    { v: false, label: 'Assente',     color: 'var(--absent)',  ink: 'var(--absent-ink)',  soft: 'var(--absent-soft)' },
   ];
   return (
     <div role="radiogroup" style={{ display: 'flex', gap: 6 }}>
@@ -501,14 +496,15 @@ function Toast({ message }) {
 function DailyView({ date, setDate, students, attendance, setAttendance, onAddStudent, onDeleteStudent, compact, flash }) {
   const [newName, setNewName] = useState('');
   const [query, setQuery] = useState('');
-  const dateInputRef = useRef(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+
   useEffect(() => {
     if (!showDatePicker) return;
     const close = () => setShowDatePicker(false);
     const t = setTimeout(() => window.addEventListener('click', close), 0);
     return () => { clearTimeout(t); window.removeEventListener('click', close); };
   }, [showDatePicker]);
+
   const dayRec = attendance[date] || {};
 
   const filtered = useMemo(() => {
@@ -518,7 +514,7 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
   }, [students, query]);
 
   const present = students.filter(n => dayRec[n] === true).length;
-  const absent = students.filter(n => dayRec[n] === false).length;
+  const absent  = students.filter(n => dayRec[n] === false).length;
   const pending = students.length - present - absent;
 
   const toggle = (name, next) => {
@@ -547,7 +543,7 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* Date + context */}
+      {/* Date selector */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <div style={{
           display: 'flex', alignItems: 'stretch',
@@ -575,7 +571,9 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
               <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
             <span style={{ fontSize: compact ? 13 : 14, fontWeight: 500, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {compact ? new Date(date+'T00:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) : formatDateLong(date)}
+              {compact
+                ? new Date(date+'T00:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' })
+                : formatDateLong(date)}
             </span>
             {isToday(date) && (
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', padding: '2px 6px', borderRadius: 999, flexShrink: 0, background: 'var(--primary-soft)', color: 'var(--primary-ink)' }}>OGGI</span>
@@ -596,53 +594,40 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
         )}
       </div>
 
-      {/* Stats hero */}
+      {/* Stats */}
       <div style={{ display: 'grid', gap: compact ? 8 : 12, gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
-        <StatCard label="Presenti" value={present} accent="var(--present-ink)" compact={compact} />
-        <StatCard label="Assenti" value={absent} accent="var(--absent-ink)" compact={compact} />
-        <StatCard label="Da definire" value={pending} accent="var(--ink-2)" compact={compact} />
-        <StatCard label="Iscritti" value={students.length} accent="var(--primary-ink)" compact={compact} />
+        <StatCard label="Presenti"    value={present} accent="var(--present-ink)" compact={compact} />
+        <StatCard label="Assenti"     value={absent}  accent="var(--absent-ink)"  compact={compact} />
+        <StatCard label="Da definire" value={pending} accent="var(--ink-2)"       compact={compact} />
+        <StatCard label="Iscritti"    value={students.length} accent="var(--primary-ink)" compact={compact} />
       </div>
 
-      {/* Toolbar: search + add + bulk */}
-      <div style={{
-        display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center',
-      }}>
+      {/* Toolbar */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{
           flex: '1 1 180px', minWidth: 160,
-          position: 'relative',
-          display: 'flex', alignItems: 'center',
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 999,
-          padding: '0 14px',
+          position: 'relative', display: 'flex', alignItems: 'center',
+          background: 'var(--surface)', border: '1px solid var(--border)',
+          borderRadius: 999, padding: '0 14px',
         }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color: 'var(--ink-3)'}}>
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
           </svg>
           <input
             type="text" placeholder="Cerca…" value={query} onChange={e => setQuery(e.target.value)}
-            style={{
-              border: 0, outline: 0, background: 'transparent',
-              padding: '10px 12px', width: '100%', fontSize: 14,
-            }}
+            style={{ border: 0, outline: 0, background: 'transparent', padding: '10px 12px', width: '100%', fontSize: 14 }}
           />
         </div>
         <div style={{
           display: 'flex', flex: '2 1 260px', minWidth: 220,
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 999,
-          padding: 3,
+          background: 'var(--surface)', border: '1px solid var(--border)',
+          borderRadius: 999, padding: 3,
         }}>
           <input
             type="text" placeholder="Aggiungi studente…" value={newName}
             onChange={e => setNewName(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && addStudent()}
-            style={{
-              border: 0, outline: 0, background: 'transparent',
-              padding: '10px 14px', flex: 1, fontSize: 14,
-            }}
+            style={{ border: 0, outline: 0, background: 'transparent', padding: '10px 14px', flex: 1, fontSize: 14 }}
           />
           <button onClick={addStudent} disabled={!newName.trim()} style={{
             padding: '0 18px', borderRadius: 999, fontWeight: 600, fontSize: 14,
@@ -661,17 +646,10 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
       </div>
 
       {/* Student list */}
-      <div style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius)',
-        overflow: 'hidden',
-      }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '12px 16px',
-          background: 'var(--surface-2)',
-          borderBottom: '1px solid var(--border)',
+          padding: '12px 16px', background: 'var(--surface-2)', borderBottom: '1px solid var(--border)',
         }}>
           <div className="mono-tag">Iscritti · {filtered.length}</div>
           <div className="mono-tag">Tap per cambiare stato</div>
@@ -702,14 +680,15 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
    MONTHLY VIEW
 ────────────────────────────────────────────────────────────── */
 function MonthlyView({ month, setMonth, students, attendance, compact, flash }) {
-  const monthInputRef = useRef(null);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
+
   useEffect(() => {
     if (!showMonthPicker) return;
     const close = () => setShowMonthPicker(false);
     const t = setTimeout(() => window.addEventListener('click', close), 0);
     return () => { clearTimeout(t); window.removeEventListener('click', close); };
   }, [showMonthPicker]);
+
   const monthDates = useMemo(
     () => Object.keys(attendance).filter(d => d.startsWith(month)).sort(),
     [attendance, month]
@@ -728,20 +707,27 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
 
   const totalSessions = monthDates.length;
   const totalPresenze = stats.reduce((s, r) => s + r.presenze, 0);
-  const totalAssenze = stats.reduce((s, r) => s + r.assenze, 0);
+  const totalAssenze  = stats.reduce((s, r) => s + r.assenze, 0);
   const avgAttendance = (totalPresenze + totalAssenze) > 0
     ? Math.round((totalPresenze / (totalPresenze + totalAssenze)) * 100) : 0;
 
-  const downloadPdf = (name) => {
+  const downloadPdf = async (name) => {
+    flash('Preparazione PDF…');
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+
+    // Fetch complete history directly from Firestore so the PDF is never
+    // limited to whichever months happen to be loaded in memory.
+    const snap = await db.collection('attendance').get();
     const monthlyCounts = {};
-    Object.entries(attendance).forEach(([d, rec]) => {
+    snap.docs.forEach(docSnap => {
+      const rec = docSnap.data();
       if (rec[name] === true) {
-        const m = d.slice(0, 7);
+        const m = docSnap.id.slice(0, 7);
         monthlyCounts[m] = (monthlyCounts[m] || 0) + 1;
       }
     });
+
     doc.setFontSize(18);
     doc.text(`Presenze — ${name}`, 15, 20);
     doc.setFontSize(10);
@@ -773,11 +759,8 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
         <div style={{
           display: 'flex', alignItems: 'stretch',
           width: compact ? '100%' : 'auto',
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 999,
-          overflow: 'visible',
-          position: 'relative',
+          background: 'var(--surface)', border: '1px solid var(--border)',
+          borderRadius: 999, overflow: 'visible', position: 'relative',
         }}>
           <button onClick={() => setMonth(shiftMonth(month, -1))} aria-label="Mese precedente"
             style={{ padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0, color: 'var(--ink-2)', borderRight: '1px solid var(--border)', borderRadius: '999px 0 0 999px' }}
@@ -795,7 +778,9 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color: 'var(--ink-3)', flexShrink: 0}}>
               <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
-            <span style={{ fontSize: compact ? 13 : 14, fontWeight: 500, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatMonthLong(month)}</span>
+            <span style={{ fontSize: compact ? 13 : 14, fontWeight: 500, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {formatMonthLong(month)}
+            </span>
           </button>
           <button onClick={() => setMonth(shiftMonth(month, 1))} aria-label="Mese successivo"
             style={{ padding: '0 14px', display: 'inline-flex', alignItems: 'center', flexShrink: 0, color: 'var(--ink-2)', borderLeft: '1px solid var(--border)', borderRadius: '0 999px 999px 0' }}
@@ -815,10 +800,10 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
 
       {/* Stats */}
       <div style={{ display: 'grid', gap: compact ? 8 : 12, gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
-        <StatCard label="Incontri" value={totalSessions} accent="var(--ink)" compact={compact} />
-        <StatCard label="Presenze totali" value={totalPresenze} accent="var(--present-ink)" compact={compact} />
-        <StatCard label="Assenze totali" value={totalAssenze} accent="var(--absent-ink)" compact={compact} />
-        <StatCard label="Media frequenza" value={`${avgAttendance}%`} accent="var(--primary-ink)" compact={compact} />
+        <StatCard label="Incontri"       value={totalSessions}         accent="var(--ink)"          compact={compact} />
+        <StatCard label="Presenze totali" value={totalPresenze}        accent="var(--present-ink)"  compact={compact} />
+        <StatCard label="Assenze totali"  value={totalAssenze}         accent="var(--absent-ink)"   compact={compact} />
+        <StatCard label="Media frequenza" value={`${avgAttendance}%`} accent="var(--primary-ink)"  compact={compact} />
       </div>
 
       {/* Table (desktop) / cards (mobile) */}
@@ -826,10 +811,8 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {stats.map(r => (
             <div key={r.name} style={{
-              background: 'var(--surface)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
-              padding: 16,
+              background: 'var(--surface)', border: '1px solid var(--border)',
+              borderRadius: 'var(--radius)', padding: 16,
               display: 'flex', flexDirection: 'column', gap: 12,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -849,11 +832,7 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
                   PDF
                 </button>
               </div>
-              {/* Mini bar */}
-              <div style={{
-                display: 'flex', height: 8, borderRadius: 999, overflow: 'hidden',
-                background: 'var(--surface-2)', border: '1px solid var(--border)',
-              }}>
+              <div style={{ display: 'flex', height: 8, borderRadius: 999, overflow: 'hidden', background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
                 <div style={{ width: `${(r.presenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--present)' }} />
                 <div style={{ width: `${(r.assenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--absent)' }} />
               </div>
@@ -865,20 +844,15 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
           ))}
         </div>
       ) : (
-        <div style={{
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)',
-          overflow: 'hidden',
-        }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--surface-2)', borderBottom: '1px solid var(--border)' }}>
-                <th style={{ padding: '14px 18px', textAlign: 'left', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Nome</th>
+                <th style={{ padding: '14px 18px', textAlign: 'left',   fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Nome</th>
                 <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Frequenza</th>
                 <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Presenze</th>
                 <th style={{ padding: '14px 18px', textAlign: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Assenze</th>
-                <th style={{ padding: '14px 18px', textAlign: 'right', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Export</th>
+                <th style={{ padding: '14px 18px', textAlign: 'right',  fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>Export</th>
               </tr>
             </thead>
             <tbody>
@@ -892,10 +866,7 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
                   </td>
                   <td style={{ padding: '14px 18px', minWidth: 180 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{
-                        flex: 1, height: 6, borderRadius: 999, overflow: 'hidden',
-                        background: 'var(--surface-2)', display: 'flex',
-                      }}>
+                      <div style={{ flex: 1, height: 6, borderRadius: 999, overflow: 'hidden', background: 'var(--surface-2)', display: 'flex' }}>
                         <div style={{ width: `${(r.presenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--present)' }} />
                         <div style={{ width: `${(r.assenze / Math.max(1, totalSessions)) * 100}%`, background: 'var(--absent)' }} />
                       </div>
@@ -938,58 +909,20 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
    APP SHELL
 ────────────────────────────────────────────────────────────── */
 function App() {
-  const [view, setView] = useState(() => localStorage.getItem('rgc:view') || 'daily');
-  const [date, setDate] = useState(todayISO());
-  const [month, setMonth] = useState(todayISO().slice(0, 7));
-  const [students, setStudents] = useState([]);
+  const [view, setView]           = useState(() => localStorage.getItem('rgc:view') || 'daily');
+  const [date, setDate]           = useState(todayISO());
+  const [month, setMonth]         = useState(todayISO().slice(0, 7));
+  const [students, setStudents]   = useState([]);
   const [attendance, setAttendance] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  // Carica studenti da Firestore
-  useEffect(() => {
-    db.collection('students').get().then(snap => {
-      setStudents(snap.docs.map(d => d.data().name));
-    });
-  }, []);
-
-  // Carica presenze del giorno corrente
-  useEffect(() => {
-    if (!students.length) return;
-    db.collection('attendance').doc(date).get().then(doc => {
-      if (doc.exists) {
-        setAttendance(prev => ({ ...prev, [date]: doc.data() }));
-      } else {
-        const init = {};
-        students.forEach(n => init[n] = null);
-        db.collection('attendance').doc(date).set(init);
-        setAttendance(prev => ({ ...prev, [date]: init }));
-      }
-      setLoading(false);
-    });
-  }, [date, students]);
-
-  // Carica presenze del mese selezionato
-  useEffect(() => {
-    if (!students.length) return;
-    db.collection('attendance')
-      .orderBy(firebase.firestore.FieldPath.documentId())
-      .startAt(month)
-      .endAt(month + '\uf8ff')
-      .get()
-      .then(snap => {
-        const monthly = {};
-        snap.docs.forEach(d => { monthly[d.id] = d.data(); });
-        setAttendance(prev => ({ ...prev, ...monthly }));
-      });
-  }, [month, students]);
+  const [loading, setLoading]     = useState(true);
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [toast, setToast] = useState('');
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const [toast, setToast]         = useState('');
+  const [width, setWidth]         = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
-  useEffect(() => {
-    localStorage.setItem('rgc:view', view);
-  }, [view]);
+  // Persist active tab
+  useEffect(() => { localStorage.setItem('rgc:view', view); }, [view]);
 
+  // Responsive breakpoint
   useEffect(() => {
     const onResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', onResize);
@@ -997,6 +930,44 @@ function App() {
   }, []);
 
   const compact = width < 720;
+
+  // Load students from Firestore
+  useEffect(() => {
+    db.collection('students').get().then(snap => {
+      setStudents(snap.docs.map(d => d.data().name));
+    });
+  }, []);
+
+  // Load daily attendance
+  useEffect(() => {
+    if (!students.length) return;
+    db.collection('attendance').doc(date).get().then(doc => {
+      if (doc.exists) {
+        setAttendance(prev => ({ ...prev, [date]: doc.data() }));
+      } else {
+        const init = {};
+        students.forEach(n => { init[n] = null; });
+        db.collection('attendance').doc(date).set(init);
+        setAttendance(prev => ({ ...prev, [date]: init }));
+      }
+      setLoading(false);
+    });
+  }, [date, students]);
+
+  // Load monthly attendance
+  useEffect(() => {
+    if (!students.length) return;
+    db.collection('attendance')
+      .orderBy(firebase.firestore.FieldPath.documentId())
+      .startAt(month)
+      .endAt(month + '')
+      .get()
+      .then(snap => {
+        const monthly = {};
+        snap.docs.forEach(d => { monthly[d.id] = d.data(); });
+        setAttendance(prev => ({ ...prev, ...monthly }));
+      });
+  }, [month, students]);
 
   const flash = (msg) => {
     setToast(msg);
@@ -1031,7 +1002,7 @@ function App() {
   };
 
   return (
-    <div data-screen-label={view === 'daily' ? '01 Giornaliera' : '02 Mensile'}>
+    <div>
 
       {/* ── Header ── */}
       <header style={{
@@ -1045,7 +1016,6 @@ function App() {
           padding: `${compact ? '14px' : '18px'} ${compact ? '18px' : '32px'}`,
           display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
         }}>
-          {/* Logo lockup */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
               width: 40, height: 40, borderRadius: 12,
@@ -1053,9 +1023,7 @@ function App() {
               display: 'grid', placeItems: 'center',
               color: '#fff',
               boxShadow: 'inset 0 -2px 0 oklch(0% 0 0 / 0.08)',
-              position: 'relative', overflow: 'hidden',
             }}>
-              {/* Simple music-note glyph */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 18V5l12-2v13"/>
                 <circle cx="6" cy="18" r="3"/>
@@ -1068,7 +1036,6 @@ function App() {
             </div>
           </div>
 
-          {/* Tabs */}
           <nav style={{
             marginLeft: 'auto',
             display: 'flex',
@@ -1078,7 +1045,7 @@ function App() {
             padding: 3,
           }}>
             {[
-              { k: 'daily', label: 'Giornaliera' },
+              { k: 'daily',   label: 'Giornaliera' },
               { k: 'monthly', label: 'Mensile' },
             ].map(t => (
               <button key={t.k} onClick={() => setView(t.k)} style={{
@@ -1100,7 +1067,6 @@ function App() {
         maxWidth: 1080, margin: '0 auto',
         padding: `${compact ? '20px 14px 64px' : '32px 32px 96px'}`,
       }}>
-        {/* Page title */}
         <div style={{ marginBottom: compact ? 18 : 24 }}>
           <div className="mono-tag" style={{ marginBottom: 8 }}>
             {view === 'daily' ? '· Vista giornaliera' : '· Vista mensile'}
@@ -1176,3 +1142,4 @@ root.render(<App />);
 </script>
 </body>
 </html>
+
