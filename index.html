@@ -704,6 +704,7 @@ function DailyView({ date, setDate, students, attendance, setAttendance, onAddSt
 function MonthlyView({ month, setMonth, students, attendance, compact, flash }) {
   const monthInputRef = useRef(null);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(null);
   useEffect(() => {
     if (!showMonthPicker) return;
     const close = () => setShowMonthPicker(false);
@@ -733,11 +734,12 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
     ? Math.round((totalPresenze / (totalPresenze + totalAssenze)) * 100) : 0;
 
   const downloadPdf = async (name) => {
-    flash(`Generazione PDF di ${name}…`);
-    // Rifaccio la query da Firestore per essere sicuro di avere TUTTI i dati
-    const snap = await db.collection('attendance').get();
-    const fullAttendance = {};
-    snap.docs.forEach(d => { fullAttendance[d.id] = d.data(); });
+    setPdfLoading(name);
+    try {
+      // Rifaccio la query da Firestore per essere sicuro di avere TUTTI i dati
+      const snap = await db.collection('attendance').get();
+      const fullAttendance = {};
+      snap.docs.forEach(d => { fullAttendance[d.id] = d.data(); });
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -767,8 +769,14 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
       doc.text(String(c), 120, y);
       y += 8;
     });
-    doc.save(`${name.replace(/\s+/g, '_')}.pdf`);
-    flash(`PDF di ${name} scaricato`);
+      doc.save(`${name.replace(/\s+/g, '_')}.pdf`);
+      flash(`PDF di ${name} scaricato`);
+    } catch (e) {
+      flash(`Errore generazione PDF`);
+      console.error(e);
+    } finally {
+      setPdfLoading(null);
+    }
   };
 
   return (
@@ -844,15 +852,26 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
                   <div style={{ fontWeight: 600, fontSize: 15 }}>{r.name}</div>
                   <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{r.pct}% frequenza</div>
                 </div>
-                <button onClick={() => downloadPdf(r.name)} aria-label={`Scarica PDF ${r.name}`} style={{
+                <button onClick={() => downloadPdf(r.name)} disabled={pdfLoading === r.name} aria-label={`Scarica PDF ${r.name}`} style={{
                   padding: '8px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
                   background: 'var(--primary-soft)', color: 'var(--primary-ink)',
                   display: 'inline-flex', alignItems: 'center', gap: 6,
+                  opacity: pdfLoading === r.name ? 0.6 : 1,
+                  cursor: pdfLoading === r.name ? 'wait' : 'pointer',
                 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
-                  </svg>
-                  PDF
+                  {pdfLoading === r.name ? (
+                    <>
+                      <span style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin .8s linear infinite', display: 'inline-block' }} />
+                      …
+                    </>
+                  ) : (
+                    <>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+                      </svg>
+                      PDF
+                    </>
+                  )}
                 </button>
               </div>
               {/* Mini bar */}
@@ -915,19 +934,30 @@ function MonthlyView({ month, setMonth, students, attendance, compact, flash }) 
                     <span className="num" style={{ fontSize: 22, color: 'var(--absent-ink)' }}>{r.assenze}</span>
                   </td>
                   <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                    <button onClick={() => downloadPdf(r.name)} style={{
+                    <button onClick={() => downloadPdf(r.name)} disabled={pdfLoading === r.name} style={{
                       padding: '7px 14px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
                       background: 'var(--primary-soft)', color: 'var(--primary-ink)',
                       display: 'inline-flex', alignItems: 'center', gap: 6,
                       transition: 'all .15s ease',
+                      opacity: pdfLoading === r.name ? 0.6 : 1,
+                      cursor: pdfLoading === r.name ? 'wait' : 'pointer',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-soft-2)'; }}
+                    onMouseEnter={e => { if (pdfLoading !== r.name) e.currentTarget.style.background = 'var(--primary-soft-2)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary-soft)'; }}
                     >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
-                      </svg>
-                      PDF
+                      {pdfLoading === r.name ? (
+                        <>
+                          <span style={{ width: 13, height: 13, borderRadius: 999, border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin .8s linear infinite', display: 'inline-block' }} />
+                          …
+                        </>
+                      ) : (
+                        <>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+                          </svg>
+                          PDF
+                        </>
+                      )}
                     </button>
                   </td>
                 </tr>
